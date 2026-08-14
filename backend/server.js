@@ -159,13 +159,8 @@ app.use('/api/auth/forgot-password', authLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
-<<<<<<< HEAD
-=======
-
-// ── SECURITY: Sanitize all inputs (after JSON parsing, before routes) ─────────
+// ── SECURITY: Sanitize all inputs (after JSON parsing, before routes)
 app.use(sanitizeInputs);
-
->>>>>>> 0df4f18913f405aa4bb91cd98b3bafef6f1b6b32
 if (process.env.NODE_ENV === 'development') { app.use(morgan('dev')); }
 
 // ── Static files ──────────────────────────────────────────────────────────────
