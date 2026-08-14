@@ -145,9 +145,9 @@ Do not add any text before or after this JSON.`;
                   description: aiData.description,
                   department: aiData.department,
                   category: aiData.category,
-                  priority: aiData.priority,
+                  priority: aiData.priority.toLowerCase(), // Normalize to lowercase for consistency
                   emergency: aiData.emergency === true,
-                  isDuplicate: false,
+                  isDuplicate: false, // Will be checked during actual complaint submission
                   isFake: false,
                   confidence: aiData.confidence || 75,
                   keywords: [],

@@ -72,8 +72,21 @@ const PRIORITY_RANK = { low: 0, medium: 1, high: 2, emergency: 3 };
 const PRIORITY_BY_RANK = ['low', 'medium', 'high', 'emergency'];
 
 export function mergePriorityWithDuplicate(aiPriority, duplicateResult, isEmergency) {
-      let rank = PRIORITY_RANK[aiPriority] ?? 1;
-      if (duplicateResult?.boostPriority) rank = Math.max(rank, PRIORITY_RANK.high);
-      if (isEmergency) rank = PRIORITY_RANK.emergency;
-      return PRIORITY_BY_RANK[rank];
+      // Normalize priority to lowercase to handle both 'low' and 'Low'
+      const normalizedPriority = (aiPriority || 'medium').toLowerCase();
+      let rank = PRIORITY_RANK[normalizedPriority] ?? 1;
+      
+      // If duplicates detected, boost to at least high priority
+      if (duplicateResult?.boostPriority) {
+            rank = Math.max(rank, PRIORITY_RANK.high);
+      }
+      
+      // Emergency always takes precedence
+      if (isEmergency) {
+            rank = PRIORITY_RANK.emergency;
+      }
+      
+      // Ensure rank is within valid bounds
+      const boundedRank = Math.max(0, Math.min(3, rank));
+      return PRIORITY_BY_RANK[boundedRank];
 }
