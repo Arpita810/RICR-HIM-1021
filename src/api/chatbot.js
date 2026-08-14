@@ -2,9 +2,9 @@ import api from './axios';
 
 // Helper to get user role from localStorage
 const getUserRole = () => {
-      if (localStorage.getItem('adminToken')) return 'admin';
-      if (localStorage.getItem('officerToken')) return 'officer';
-      if (localStorage.getItem('citizenToken') || localStorage.getItem('token')) return 'citizen';
+      if (localStorage.getItem('adminToken')) {return 'admin';}
+      if (localStorage.getItem('officerToken')) {return 'officer';}
+      if (localStorage.getItem('citizenToken') || localStorage.getItem('token')) {return 'citizen';}
       return 'guest';
 };
 

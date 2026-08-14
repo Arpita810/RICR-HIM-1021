@@ -6,7 +6,7 @@ import ApiError from '../utils/ApiError.js';
  * Block DB operations when MongoDB is not connected (avoids buffering timeouts).
  */
 export const requireDb = (req, res, next) => {
-      if (isDbConnected()) return next();
+      if (isDbConnected()) {return next();}
 
       const state = getDbStateLabel();
       console.error(`[requireDb] Rejected ${req.method} ${req.originalUrl} — DB state: ${state} (readyState=${mongoose.connection.readyState})`);

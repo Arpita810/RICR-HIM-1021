@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -34,14 +34,14 @@ export default function AdminSignup({ onBack }) {
 
       const validate = () => {
             const e = {};
-            if (!form.name.trim() || form.name.length < 3) e.name = 'Enter full name';
-            if (!form.phone || !/^[6-9]\d{9}$/.test(form.phone)) e.phone = 'Enter valid 10-digit mobile';
-            if (!form.email || !/^\S+@\S+\.\S+$/.test(form.email)) e.email = 'Enter valid email';
-            if (!form.department) e.department = 'Please select department';
-            if (!form.adminSecretKey.trim()) e.adminSecretKey = 'Admin secret key is required';
-            if (!form.password || form.password.length < 8) e.password = 'Min 8 characters';
-            if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
-            if (!otpVerified) e.otp = 'Please verify your email with OTP';
+            if (!form.name.trim() || form.name.length < 3) {e.name = 'Enter full name';}
+            if (!form.phone || !/^[6-9]\d{9}$/.test(form.phone)) {e.phone = 'Enter valid 10-digit mobile';}
+            if (!form.email || !/^\S+@\S+\.\S+$/.test(form.email)) {e.email = 'Enter valid email';}
+            if (!form.department) {e.department = 'Please select department';}
+            if (!form.adminSecretKey.trim()) {e.adminSecretKey = 'Admin secret key is required';}
+            if (!form.password || form.password.length < 8) {e.password = 'Min 8 characters';}
+            if (form.password !== form.confirmPassword) {e.confirmPassword = 'Passwords do not match';}
+            if (!otpVerified) {e.otp = 'Please verify your email with OTP';}
             setErrors(e);
             return Object.keys(e).length === 0;
       };
@@ -49,7 +49,7 @@ export default function AdminSignup({ onBack }) {
       const handleSubmit = async (e) => {
             e.preventDefault();
             if (!validate()) {
-                  if (!form.department) toast.error('Please select department');
+                  if (!form.department) {toast.error('Please select department');}
                   return;
             }
             setLoading(true);

@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
 
 const DEFAULT_CENTER = { lat: 28.6139, lng: 77.2090 };
 
 function loadGoogleMaps(apiKey) {
-      if (window.google?.maps) return Promise.resolve();
+      if (window.google?.maps) {return Promise.resolve();}
       return new Promise((resolve, reject) => {
             const id = 'google-maps-script';
             if (document.getElementById(id)) {
@@ -22,7 +22,7 @@ function loadGoogleMaps(apiKey) {
 }
 
 function loadLeaflet() {
-      if (window.L) return Promise.resolve();
+      if (window.L) {return Promise.resolve();}
       return new Promise((resolve) => {
             if (!document.getElementById('leaflet-css')) {
                   const link = document.createElement('link');
@@ -98,7 +98,7 @@ export default function LocationMapPicker({ lat, lng, onLocationChange }) {
                   try {
                         if (apiKey) {
                               await loadGoogleMaps(apiKey);
-                              if (cancelled || !mapDivRef.current) return;
+                              if (cancelled || !mapDivRef.current) {return;}
 
                               const map = new window.google.maps.Map(mapDivRef.current, {
                                     center,
@@ -129,7 +129,7 @@ export default function LocationMapPicker({ lat, lng, onLocationChange }) {
                               setMapMode('google');
                         } else {
                               await loadLeaflet();
-                              if (cancelled || !mapDivRef.current) return;
+                              if (cancelled || !mapDivRef.current) {return;}
 
                               const map = window.L.map(mapDivRef.current).setView([center.lat, center.lng], 15);
                               window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -156,20 +156,20 @@ export default function LocationMapPicker({ lat, lng, onLocationChange }) {
                   } catch {
                         setMapMode('error');
                   } finally {
-                        if (!cancelled) setLoading(false);
+                        if (!cancelled) {setLoading(false);}
                   }
             };
 
             init();
             return () => {
                   cancelled = true;
-                  if (mapRef.current?.remove) mapRef.current.remove();
+                  if (mapRef.current?.remove) {mapRef.current.remove();}
                   mapRef.current = null;
             };
       }, [apiKey, applyLocation]);
 
       useEffect(() => {
-            if (!lat || !lng || !markerRef.current) return;
+            if (!lat || !lng || !markerRef.current) {return;}
             if (mapMode === 'google' && markerRef.current.setPosition) {
                   markerRef.current.setPosition({ lat: +lat, lng: +lng });
                   mapRef.current?.panTo({ lat: +lat, lng: +lng });

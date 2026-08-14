@@ -31,7 +31,7 @@ const DEPARTMENT_LABELS = {
 };
 
 const convertDeptToSlug = (dept) => {
-  if (!dept) return '';
+  if (!dept) {return '';}
   const normalized = String(dept).trim();
   const mapping = {
     Police: 'police',
@@ -242,7 +242,7 @@ export const getAdminProfile = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Not authorized', code: 'NO_ADMIN' });
     }
 
-    let admin = await Admin.findById(req.admin.id);
+    const admin = await Admin.findById(req.admin.id);
     if (!admin) {
       const userAdmin = await User.findById(req.admin.id).select('name email phone role managedDepartment department createdAt');
       if (userAdmin?.role === 'admin') {
@@ -562,8 +562,8 @@ export const getAdminComplaints = async (req, res) => {
     const { status, search, emergency, limit = 50, page = 1 } = req.query;
     const filter = { category: department };
 
-    if (status) filter.status = status;
-    if (emergency === 'true') filter.isEmergency = true;
+    if (status) {filter.status = status;}
+    if (emergency === 'true') {filter.isEmergency = true;}
     if (search) {
       filter.$or = [
         { title: { $regex: search, $options: 'i' } },
@@ -648,7 +648,7 @@ export const updateComplaintStatus = async (req, res) => {
 
     const prevStatus = complaint.status;
     complaint.status = status;
-    if (status === 'resolved') complaint.resolvedAt = new Date();
+    if (status === 'resolved') {complaint.resolvedAt = new Date();}
     complaint.timeline.push({
       status,
       note: note || `Status updated to ${status} by admin`,

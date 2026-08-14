@@ -1,4 +1,3 @@
-import React from 'react';
 import { ExternalLink } from 'lucide-react';
 
 export default function ComplaintMapView({ lat, lng, address, height = 'h-48' }) {

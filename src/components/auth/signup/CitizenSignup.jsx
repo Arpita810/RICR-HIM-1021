@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, MapPin, Building2, Contact, ArrowLeft, ArrowRight, Loader2, Camera, AlertCircle } from 'lucide-react';
@@ -43,17 +43,17 @@ export default function CitizenSignup({ onBack }) {
       const validateStep = () => {
             const e = {};
             if (step === 0) {
-                  if (!form.name.trim() || form.name.length < 3) e.name = 'Enter full name (min 3 chars)';
-                  if (!form.email || !/^\S+@\S+\.\S+$/.test(form.email)) e.email = 'Enter a valid email';
-                  if (!form.phone || !/^[6-9]\d{9}$/.test(form.phone)) e.phone = 'Enter valid 10-digit mobile';
-                  if (!form.password || form.password.length < 8) e.password = 'Min 8 characters';
-                  if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
+                  if (!form.name.trim() || form.name.length < 3) {e.name = 'Enter full name (min 3 chars)';}
+                  if (!form.email || !/^\S+@\S+\.\S+$/.test(form.email)) {e.email = 'Enter a valid email';}
+                  if (!form.phone || !/^[6-9]\d{9}$/.test(form.phone)) {e.phone = 'Enter valid 10-digit mobile';}
+                  if (!form.password || form.password.length < 8) {e.password = 'Min 8 characters';}
+                  if (form.password !== form.confirmPassword) {e.confirmPassword = 'Passwords do not match';}
             }
             if (step === 1) {
-                  if (!form.address.trim()) e.address = 'Address is required';
-                  if (!form.city.trim()) e.city = 'City is required';
-                  if (!form.state) e.state = 'Select your state';
-                  if (!form.govtIdNumber.trim()) e.govtIdNumber = 'Government ID number is required';
+                  if (!form.address.trim()) {e.address = 'Address is required';}
+                  if (!form.city.trim()) {e.city = 'City is required';}
+                  if (!form.state) {e.state = 'Select your state';}
+                  if (!form.govtIdNumber.trim()) {e.govtIdNumber = 'Government ID number is required';}
             }
             // ✅ MANDATORY: Face capture required
             if (step === 2) {
@@ -62,7 +62,7 @@ export default function CitizenSignup({ onBack }) {
                   }
             }
             if (step === 3) {
-                  if (!otpVerified) e.otp = 'Please verify your email with OTP';
+                  if (!otpVerified) {e.otp = 'Please verify your email with OTP';}
             }
             setErrors(e);
             return Object.keys(e).length === 0;
@@ -84,7 +84,7 @@ export default function CitizenSignup({ onBack }) {
 
       const handleSubmit = async (e) => {
             e.preventDefault();
-            if (!validateStep()) return;
+            if (!validateStep()) {return;}
 
             // ✅ Double-check mandatory face verification
             if (!liveImage || !liveImageConfirmed) {
@@ -96,10 +96,10 @@ export default function CitizenSignup({ onBack }) {
             setLoading(true);
             try {
                   const fd = new FormData();
-                  Object.entries(form).forEach(([k, v]) => { if (v && k !== 'govtIdImage') fd.append(k, v); });
+                  Object.entries(form).forEach(([k, v]) => { if (v && k !== 'govtIdImage') {fd.append(k, v);} });
                   fd.append('role', 'citizen');
                   fd.append('otpVerified', 'true');
-                  if (form.govtIdImage) fd.append('govtIdImage', form.govtIdImage);
+                  if (form.govtIdImage) {fd.append('govtIdImage', form.govtIdImage);}
                   if (liveImage) {
                         // Convert base64 to blob
                         const res = await fetch(liveImage);

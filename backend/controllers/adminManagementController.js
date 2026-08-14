@@ -25,9 +25,9 @@ export const getAdminComplaints = async (req, res, next) => {
             const { status, priority, page = 1, limit = 20, search, emergency } = req.query;
             const filter = await buildComplaintFilter(scope);
 
-            if (status) filter.status = status;
-            if (priority) filter.priority = priority;
-            if (emergency === 'true') filter.isEmergency = true;
+            if (status) {filter.status = status;}
+            if (priority) {filter.priority = priority;}
+            if (emergency === 'true') {filter.isEmergency = true;}
             if (search) {
                   filter.$or = [
                         { title: { $regex: search, $options: 'i' } },
@@ -63,7 +63,7 @@ export const getAdminOfficers = async (req, res, next) => {
             const { status, page = 1, limit = 20, search } = req.query;
             const filter = buildOfficerFilter(scope);
 
-            if (status) filter.officerStatus = status;
+            if (status) {filter.officerStatus = status;}
             if (search) {
                   filter.$or = [
                         { name: { $regex: search, $options: 'i' } },
@@ -101,7 +101,7 @@ export const assignOfficerToComplaint = async (req, res, next) => {
             }
 
             const complaint = await Complaint.findById(complaintId);
-            if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+            if (!complaint) {return res.status(404).json({ success: false, message: 'Complaint not found' });}
             if (!(await assertComplaintAccess(scope, complaint))) {
                   return res.status(403).json({ success: false, message: 'Complaint is outside your department' });
             }
@@ -112,7 +112,7 @@ export const assignOfficerToComplaint = async (req, res, next) => {
                   officerStatus: 'approved',
                   isActive: true,
             });
-            if (!officer) return res.status(404).json({ success: false, message: 'Approved officer not found' });
+            if (!officer) {return res.status(404).json({ success: false, message: 'Approved officer not found' });}
 
             if (!scope.isSuper && officer.department !== scope.departmentSlug) {
                   return res.status(403).json({ success: false, message: 'Officer belongs to a different department' });
@@ -161,13 +161,13 @@ export const updateComplaintStatusAdmin = async (req, res, next) => {
             }
 
             const complaint = await Complaint.findById(complaintId);
-            if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+            if (!complaint) {return res.status(404).json({ success: false, message: 'Complaint not found' });}
             if (!(await assertComplaintAccess(scope, complaint))) {
                   return res.status(403).json({ success: false, message: 'Complaint is outside your department' });
             }
 
             complaint.status = status;
-            if (status === 'resolved') complaint.resolvedAt = new Date();
+            if (status === 'resolved') {complaint.resolvedAt = new Date();}
             complaint.timeline.push({
                   status,
                   note: note || `Status updated to ${status} by admin`,
@@ -205,7 +205,7 @@ export const createDepartmentAdmin = async (req, res, next) => {
             }
 
             const exists = await User.findOne({ email: email.toLowerCase() });
-            if (exists) return res.status(400).json({ success: false, message: 'Email already registered' });
+            if (exists) {return res.status(400).json({ success: false, message: 'Email already registered' });}
 
             const admin = await User.create({
                   name,
@@ -294,7 +294,7 @@ export const createOfficer = async (req, res, next) => {
             }
 
             const exists = await User.findOne({ email: email.toLowerCase() });
-            if (exists) return res.status(400).json({ success: false, message: 'Email already registered' });
+            if (exists) {return res.status(400).json({ success: false, message: 'Email already registered' });}
 
             const employeeId = await generateEmployeeId(deptSlug);
             const tempPassword = crypto.randomBytes(6).toString('hex') + 'A1!';
@@ -345,7 +345,7 @@ export const approveOfficer = async (req, res, next) => {
       try {
             const scope = req.adminScope || await getAdminScope(req.user);
             const officer = await User.findOne({ _id: req.params.id, role: 'officer' });
-            if (!officer) return res.status(404).json({ success: false, message: 'Officer not found' });
+            if (!officer) {return res.status(404).json({ success: false, message: 'Officer not found' });}
 
             if (!scope.isSuper && officer.department !== scope.departmentSlug) {
                   return res.status(403).json({ success: false, message: 'Officer is outside your department' });
@@ -381,7 +381,7 @@ export const rejectOfficer = async (req, res, next) => {
       try {
             const scope = req.adminScope || await getAdminScope(req.user);
             const officer = await User.findOne({ _id: req.params.id, role: 'officer' });
-            if (!officer) return res.status(404).json({ success: false, message: 'Officer not found' });
+            if (!officer) {return res.status(404).json({ success: false, message: 'Officer not found' });}
 
             if (!scope.isSuper && officer.department !== scope.departmentSlug) {
                   return res.status(403).json({ success: false, message: 'Officer is outside your department' });
@@ -401,7 +401,7 @@ export const generateOfficerEmployeeId = async (req, res, next) => {
       try {
             const scope = req.adminScope || await getAdminScope(req.user);
             const officer = await User.findOne({ _id: req.params.id, role: 'officer' });
-            if (!officer) return res.status(404).json({ success: false, message: 'Officer not found' });
+            if (!officer) {return res.status(404).json({ success: false, message: 'Officer not found' });}
 
             if (!scope.isSuper && officer.department !== scope.departmentSlug) {
                   return res.status(403).json({ success: false, message: 'Officer is outside your department' });
@@ -420,7 +420,7 @@ export const blockOfficer = async (req, res, next) => {
       try {
             const scope = req.adminScope || await getAdminScope(req.user);
             const officer = await User.findOne({ _id: req.params.id, role: 'officer' });
-            if (!officer) return res.status(404).json({ success: false, message: 'Officer not found' });
+            if (!officer) {return res.status(404).json({ success: false, message: 'Officer not found' });}
 
             if (!scope.isSuper && officer.department !== scope.departmentSlug) {
                   return res.status(403).json({ success: false, message: 'Officer is outside your department' });
@@ -455,7 +455,7 @@ export const unblockOfficer = async (req, res, next) => {
       try {
             const scope = req.adminScope || await getAdminScope(req.user);
             const officer = await User.findOne({ _id: req.params.id, role: 'officer' });
-            if (!officer) return res.status(404).json({ success: false, message: 'Officer not found' });
+            if (!officer) {return res.status(404).json({ success: false, message: 'Officer not found' });}
 
             if (!scope.isSuper && officer.department !== scope.departmentSlug) {
                   return res.status(403).json({ success: false, message: 'Officer is outside your department' });

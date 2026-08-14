@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Home, RefreshCw, LayoutDashboard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -20,8 +19,8 @@ export default function ErrorPage({
       const displayMessage = message ?? t('errors.tryAgain');
 
       const handleReload = () => {
-            if (onReload) onReload();
-            else window.location.reload();
+            if (onReload) {onReload();}
+            else {window.location.reload();}
       };
 
       const go = (href) => {

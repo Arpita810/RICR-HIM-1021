@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -34,18 +34,18 @@ export default function AdminRegisterPage() {
 
       const validate = () => {
             const e = {};
-            if (!form.name.trim() || form.name.trim().length < 2) e.name = t('validation.fullNameRequired');
-            if (!form.email.trim()) e.email = t('validation.emailRequired');
-            else if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = t('validation.enterValidEmail');
-            if (!form.mobile.trim()) e.mobile = t('validation.mobileRequired');
+            if (!form.name.trim() || form.name.trim().length < 2) {e.name = t('validation.fullNameRequired');}
+            if (!form.email.trim()) {e.email = t('validation.emailRequired');}
+            else if (!/^\S+@\S+\.\S+$/.test(form.email)) {e.email = t('validation.enterValidEmail');}
+            if (!form.mobile.trim()) {e.mobile = t('validation.mobileRequired');}
             else if (!/^[6-9]\d{9}$/.test(form.mobile.replace(/\D/g, '').slice(-10))) {
                   e.mobile = t('validation.mobileInvalid');
             }
-            if (!form.password) e.password = t('validation.passwordRequired');
-            else if (form.password.length < 8) e.password = t('validation.passwordMinLength');
-            if (form.password !== form.confirmPassword) e.confirmPassword = t('validation.passwordMismatch');
-            if (!form.department) e.department = t('validation.departmentRequired');
-            if (!otpHook.otpVerified) e.otp = t('verification.emailTitle');
+            if (!form.password) {e.password = t('validation.passwordRequired');}
+            else if (form.password.length < 8) {e.password = t('validation.passwordMinLength');}
+            if (form.password !== form.confirmPassword) {e.confirmPassword = t('validation.passwordMismatch');}
+            if (!form.department) {e.department = t('validation.departmentRequired');}
+            if (!otpHook.otpVerified) {e.otp = t('verification.emailTitle');}
             setErrors(e);
             return Object.keys(e).length === 0;
       };

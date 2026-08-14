@@ -1,34 +1,34 @@
-import model from "../services/geminiService.js";
-import asyncHandler from "../middleware/asyncHandler.js";
+import model from '../services/geminiService.js';
+import asyncHandler from '../middleware/asyncHandler.js';
 
 const DEPARTMENTS = [
-      "Police",
-      "Electricity",
-      "Water",
-      "Road",
-      "Sanitation",
-      "Agriculture",
-      "Health",
-      "Panchayat",
-      "Education"
+      'Police',
+      'Electricity',
+      'Water',
+      'Road',
+      'Sanitation',
+      'Agriculture',
+      'Health',
+      'Panchayat',
+      'Education'
 ];
 
-const PRIORITY_LEVELS = ["Low", "Medium", "High", "Emergency"];
+const PRIORITY_LEVELS = ['Low', 'Medium', 'High', 'Emergency'];
 
 const EMERGENCY_KEYWORDS = [
-      "fire",
-      "violence",
-      "electric",
-      "shock",
-      "accident",
-      "death",
-      "rape",
-      "murder",
-      "stealing",
-      "robbery",
-      "gas leak",
-      "collapse",
-      "injury"
+      'fire',
+      'violence',
+      'electric',
+      'shock',
+      'accident',
+      'death',
+      'rape',
+      'murder',
+      'stealing',
+      'robbery',
+      'gas leak',
+      'collapse',
+      'injury'
 ];
 
 // Analyze voice complaint using Gemini AI
@@ -38,7 +38,7 @@ export const analyzeVoiceComplaint = asyncHandler(async (req, res) => {
       if (!complaintText || complaintText.trim().length === 0) {
             return res.status(400).json({
                   success: false,
-                  message: "Complaint text is required"
+                  message: 'Complaint text is required'
             });
       }
 
@@ -82,65 +82,65 @@ RETURN ONLY THIS JSON (no markdown, no code blocks, no explanation):
 Do not add any text before or after this JSON.`;
 
       try {
-            console.log("🤖 [analyzeVoiceComplaint] Received complaint text:", complaintText.substring(0, 100) + "...");
-            console.log("🤖 [analyzeVoiceComplaint] Sending to Gemini API...");
+            console.log('🤖 [analyzeVoiceComplaint] Received complaint text:', complaintText.substring(0, 100) + '...');
+            console.log('🤖 [analyzeVoiceComplaint] Sending to Gemini API...');
 
             if (!model) {
-                  throw new Error("Gemini model not initialized - check GEMINI_API_KEY in .env");
+                  throw new Error('Gemini model not initialized - check GEMINI_API_KEY in .env');
             }
 
             const result = await model.generateContent(prompt);
             const response = result.response;
             const text = response.text();
 
-            console.log("🤖 [analyzeVoiceComplaint] Raw Gemini response:", text.substring(0, 200) + "...");
+            console.log('🤖 [analyzeVoiceComplaint] Raw Gemini response:', text.substring(0, 200) + '...');
 
             // Clean JSON response - remove markdown code blocks
             const cleaned = text
-                  .replace(/```json\n?/g, "")
-                  .replace(/```\n?/g, "")
-                  .replace(/^[\s\n]*/, "")
-                  .replace(/[\s\n]*$/, "")
+                  .replace(/```json\n?/g, '')
+                  .replace(/```\n?/g, '')
+                  .replace(/^[\s\n]*/, '')
+                  .replace(/[\s\n]*$/, '')
                   .trim();
 
-            console.log("🤖 [analyzeVoiceComplaint] Cleaned response:", cleaned.substring(0, 200) + "...");
+            console.log('🤖 [analyzeVoiceComplaint] Cleaned response:', cleaned.substring(0, 200) + '...');
 
             let aiData;
             try {
                   aiData = JSON.parse(cleaned);
-                  console.log("✅ [analyzeVoiceComplaint] JSON parsed successfully");
+                  console.log('✅ [analyzeVoiceComplaint] JSON parsed successfully');
             } catch (parseError) {
-                  console.error("❌ [analyzeVoiceComplaint] JSON Parse Error:", parseError.message);
-                  console.error("❌ [analyzeVoiceComplaint] Failed text:", cleaned);
+                  console.error('❌ [analyzeVoiceComplaint] JSON Parse Error:', parseError.message);
+                  console.error('❌ [analyzeVoiceComplaint] Failed text:', cleaned);
                   return res.status(500).json({
                         success: false,
-                        message: "Failed to parse AI response",
+                        message: 'Failed to parse AI response',
                         error: `JSON parsing failed: ${parseError.message}`,
                         receivedData: cleaned.substring(0, 200)
                   });
             }
 
             // Validate and normalize response
-            if (!aiData.title) aiData.title = "Complaint";
-            if (!aiData.description) aiData.description = complaintText;
-            if (!aiData.category) aiData.category = "General";
+            if (!aiData.title) {aiData.title = 'Complaint';}
+            if (!aiData.description) {aiData.description = complaintText;}
+            if (!aiData.category) {aiData.category = 'General';}
 
             // Normalize department
             if (!DEPARTMENTS.includes(aiData.department)) {
-                  console.warn("⚠️ [analyzeVoiceComplaint] Invalid department, defaulting to Panchayat:", aiData.department);
-                  aiData.department = "Panchayat";
+                  console.warn('⚠️ [analyzeVoiceComplaint] Invalid department, defaulting to Panchayat:', aiData.department);
+                  aiData.department = 'Panchayat';
             }
 
             // Normalize priority
             if (!PRIORITY_LEVELS.includes(aiData.priority)) {
-                  console.warn("⚠️ [analyzeVoiceComplaint] Invalid priority, defaulting to Medium:", aiData.priority);
-                  aiData.priority = "Medium";
+                  console.warn('⚠️ [analyzeVoiceComplaint] Invalid priority, defaulting to Medium:', aiData.priority);
+                  aiData.priority = 'Medium';
             }
 
             aiData = {
                   originalText: complaintText,
                   translatedText: aiData.translatedText || complaintText,
-                  language: aiData.language || "en",
+                  language: aiData.language || 'en',
                   title: aiData.title,
                   description: aiData.description,
                   department: aiData.department,
@@ -154,7 +154,7 @@ Do not add any text before or after this JSON.`;
                   timestamp: new Date()
             };
 
-            console.log("✅ [analyzeVoiceComplaint] Analysis complete:", {
+            console.log('✅ [analyzeVoiceComplaint] Analysis complete:', {
                   title: aiData.title,
                   department: aiData.department,
                   priority: aiData.priority,
@@ -166,24 +166,24 @@ Do not add any text before or after this JSON.`;
                   data: aiData
             });
       } catch (error) {
-            console.error("❌ [analyzeVoiceComplaint] Gemini API Error:", {
+            console.error('❌ [analyzeVoiceComplaint] Gemini API Error:', {
                   message: error.message,
                   status: error.status,
                   errorCode: error.code
             });
 
-            let errorMessage = "AI complaint analysis failed";
+            let errorMessage = 'AI complaint analysis failed';
 
-            if (error.message.includes("API_KEY")) {
-                  errorMessage = "Gemini API key not configured";
-            } else if (error.message.includes("timeout")) {
-                  errorMessage = "AI analysis timed out";
+            if (error.message.includes('API_KEY')) {
+                  errorMessage = 'Gemini API key not configured';
+            } else if (error.message.includes('timeout')) {
+                  errorMessage = 'AI analysis timed out';
             } else if (error.status === 429) {
-                  errorMessage = "Too many requests to AI service";
+                  errorMessage = 'Too many requests to AI service';
             } else if (error.status === 401) {
-                  errorMessage = "AI service authentication failed";
+                  errorMessage = 'AI service authentication failed';
             } else if (error.status === 400) {
-                  errorMessage = "Invalid request to AI service";
+                  errorMessage = 'Invalid request to AI service';
             }
 
             res.status(500).json({
@@ -218,7 +218,7 @@ export const detectLanguage = asyncHandler(async (req, res) => {
       if (!complaintText || complaintText.trim().length === 0) {
             return res.status(400).json({
                   success: false,
-                  message: "Complaint text is required"
+                  message: 'Complaint text is required'
             });
       }
 
@@ -238,27 +238,27 @@ Return only one of these codes:
 Return only the language code, nothing else.`;
 
       try {
-            console.log("🌐 [detectLanguage] Detecting language...");
+            console.log('🌐 [detectLanguage] Detecting language...');
             const result = await model.generateContent(prompt);
             const response = result.response;
             const languageCode = response.text().trim().toLowerCase();
 
-            const validLanguages = ["en", "hi", "mr", "bn", "ta", "te", "gu", "pa"];
+            const validLanguages = ['en', 'hi', 'mr', 'bn', 'ta', 'te', 'gu', 'pa'];
             const detectedLanguage = validLanguages.includes(languageCode)
                   ? languageCode
-                  : "en";
+                  : 'en';
 
-            console.log("✅ [detectLanguage] Detected:", detectedLanguage);
+            console.log('✅ [detectLanguage] Detected:', detectedLanguage);
 
             res.json({
                   success: true,
                   language: detectedLanguage
             });
       } catch (error) {
-            console.error("❌ [detectLanguage] Error:", error.message);
+            console.error('❌ [detectLanguage] Error:', error.message);
             res.status(500).json({
                   success: false,
-                  message: "Language detection failed",
+                  message: 'Language detection failed',
                   error: error.message
             });
       }
@@ -271,22 +271,22 @@ export const translateText = asyncHandler(async (req, res) => {
       if (!text || text.trim().length === 0) {
             return res.status(400).json({
                   success: false,
-                  message: "Text to translate is required"
+                  message: 'Text to translate is required'
             });
       }
 
       const languageNames = {
-            en: "English",
-            hi: "Hindi",
-            mr: "Marathi",
-            bn: "Bengali",
-            ta: "Tamil",
-            te: "Telugu",
-            gu: "Gujarati",
-            pa: "Punjabi"
+            en: 'English',
+            hi: 'Hindi',
+            mr: 'Marathi',
+            bn: 'Bengali',
+            ta: 'Tamil',
+            te: 'Telugu',
+            gu: 'Gujarati',
+            pa: 'Punjabi'
       };
 
-      const targetName = languageNames[targetLanguage] || "English";
+      const targetName = languageNames[targetLanguage] || 'English';
 
       const prompt = `Translate this text to ${targetName}. Return only the translated text, nothing else.
 
@@ -294,12 +294,12 @@ Text to translate:
 "${text}"`;
 
       try {
-            console.log("🌐 [translateText] Translating to:", targetLanguage);
+            console.log('🌐 [translateText] Translating to:', targetLanguage);
             const result = await model.generateContent(prompt);
             const response = result.response;
             const translatedText = response.text().trim();
 
-            console.log("✅ [translateText] Translation complete");
+            console.log('✅ [translateText] Translation complete');
 
             res.json({
                   success: true,
@@ -308,10 +308,10 @@ Text to translate:
                   targetLanguage: targetLanguage
             });
       } catch (error) {
-            console.error("❌ [translateText] Error:", error.message);
+            console.error('❌ [translateText] Error:', error.message);
             res.status(500).json({
                   success: false,
-                  message: "Translation failed",
+                  message: 'Translation failed',
                   error: error.message
             });
       }

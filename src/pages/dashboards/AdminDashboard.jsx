@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -52,7 +52,7 @@ export default function AdminDashboard() {
       };
 
       return (
-            <div className={`min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950`}>
+            <div className={'min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950'}>
                   <div className={`absolute inset-0 bg-gradient-to-br ${theme.gradient}/10 pointer-events-none opacity-30`} />
 
                   <div className="relative flex">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -37,25 +37,25 @@ export default function AdminSignup() {
 
       const set = (k, v) => {
             setForm((p) => ({ ...p, [k]: v }));
-            if (errors[k]) setErrors((p) => ({ ...p, [k]: '' }));
+            if (errors[k]) {setErrors((p) => ({ ...p, [k]: '' }));}
       };
 
       const validate = () => {
             const e = {};
-            if (!form.name.trim()) e.name = 'Full name is required';
-            if (!form.phone) e.phone = 'Mobile number is required';
-            else if (!/^[6-9]\d{9}$/.test(form.phone)) e.phone = 'Enter valid 10-digit number';
-            if (!form.email) e.email = 'Admin email is required';
-            else if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = 'Invalid email';
-            if (!form.department) e.department = 'Please select department';
-            if (!form.adminSecretKey.trim()) e.adminSecretKey = 'Admin secret key is required';
-            if (!form.password) e.password = 'Password is required';
-            else if (form.password.length < 8) e.password = 'Min 8 characters';
+            if (!form.name.trim()) {e.name = 'Full name is required';}
+            if (!form.phone) {e.phone = 'Mobile number is required';}
+            else if (!/^[6-9]\d{9}$/.test(form.phone)) {e.phone = 'Enter valid 10-digit number';}
+            if (!form.email) {e.email = 'Admin email is required';}
+            else if (!/^\S+@\S+\.\S+$/.test(form.email)) {e.email = 'Invalid email';}
+            if (!form.department) {e.department = 'Please select department';}
+            if (!form.adminSecretKey.trim()) {e.adminSecretKey = 'Admin secret key is required';}
+            if (!form.password) {e.password = 'Password is required';}
+            else if (form.password.length < 8) {e.password = 'Min 8 characters';}
             else if (!/(?=.*[A-Z])(?=.*[a-z])(?=.*\d)/.test(form.password)) {
                   e.password = 'Must include uppercase, lowercase & number';
             }
-            if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
-            if (!otpHook.otpVerified) e.otp = 'Please verify your email with OTP';
+            if (form.password !== form.confirmPassword) {e.confirmPassword = 'Passwords do not match';}
+            if (!otpHook.otpVerified) {e.otp = 'Please verify your email with OTP';}
             setErrors(e);
             return Object.keys(e).length === 0;
       };
@@ -63,8 +63,8 @@ export default function AdminSignup() {
       const handleSubmit = async (e) => {
             e.preventDefault();
             if (!validate()) {
-                  if (!form.department) toast.error('Please select department');
-                  else toast.error('Please fix the errors below');
+                  if (!form.department) {toast.error('Please select department');}
+                  else {toast.error('Please fix the errors below');}
                   return;
             }
 

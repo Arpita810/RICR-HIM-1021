@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
@@ -13,8 +13,8 @@ export default defineConfig({
         secure: false,
         configure: (proxy) => {
           proxy.on('error', (err) => {
-            console.warn('[proxy] Backend not available:', err.message)
-          })
+            console.warn('[proxy] Backend not available:', err.message);
+          });
         },
       },
       '/uploads': {
@@ -23,10 +23,10 @@ export default defineConfig({
         secure: false,
         configure: (proxy) => {
           proxy.on('error', (err) => {
-            console.warn('[proxy] Backend not available:', err.message)
-          })
+            console.warn('[proxy] Backend not available:', err.message);
+          });
         },
       },
     },
   },
-})
+});

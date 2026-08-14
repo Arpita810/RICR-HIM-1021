@@ -84,7 +84,7 @@ export const officerWelcomeEmailHtml = ({ name, department, employeeId, register
 };
 
 export async function sendOfficerWelcomeEmail(officer) {
-      if (!officer?.email || !officer?.employeeId) return null;
+      if (!officer?.email || !officer?.employeeId) {return null;}
       const registerUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/officer/register`;
       return sendEmail({
             to: officer.email,

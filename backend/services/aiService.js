@@ -26,7 +26,7 @@ const PRIORITY_KEYWORDS = {
 
 // ── Detect category from text ─────────────────────────────────────────────────
 export const detectCategory = (text) => {
-      if (!text) return 'other';
+      if (!text) {return 'other';}
       const lower = text.toLowerCase();
       let bestMatch = 'other';
       let bestScore = 0;
@@ -43,18 +43,18 @@ export const detectCategory = (text) => {
 
 // ── Detect priority from text ─────────────────────────────────────────────────
 export const detectPriority = (text) => {
-      if (!text) return 'medium';
+      if (!text) {return 'medium';}
       const lower = text.toLowerCase();
 
       for (const [priority, keywords] of Object.entries(PRIORITY_KEYWORDS)) {
-            if (keywords.some(kw => lower.includes(kw))) return priority;
+            if (keywords.some(kw => lower.includes(kw))) {return priority;}
       }
       return 'medium';
 };
 
 // ── Detect if complaint is emergency ─────────────────────────────────────────
 export const isEmergency = (text) => {
-      if (!text) return false;
+      if (!text) {return false;}
       const lower = text.toLowerCase();
       return EMERGENCY_KEYWORDS.some(kw => lower.includes(kw));
 };
@@ -65,10 +65,10 @@ export const analyzeComplaint = (title, description) => {
       const suggestedPriority = detectPriority(fullText);
       const emergency = isEmergency(fullText);
       const reasons = [];
-      if (emergency) reasons.push('Emergency keywords detected in description');
-      else if (suggestedPriority === 'high') reasons.push('High-severity keywords detected');
-      else if (suggestedPriority === 'medium') reasons.push('Standard grievance — medium priority');
-      else reasons.push('Low-priority / suggestion-type complaint');
+      if (emergency) {reasons.push('Emergency keywords detected in description');}
+      else if (suggestedPriority === 'high') {reasons.push('High-severity keywords detected');}
+      else if (suggestedPriority === 'medium') {reasons.push('Standard grievance — medium priority');}
+      else {reasons.push('Low-priority / suggestion-type complaint');}
 
       return {
             suggestedCategory: detectCategory(fullText),
@@ -82,7 +82,7 @@ export const analyzeComplaint = (title, description) => {
 
 export const buildAiPriorityReason = (ai, duplicateResult) => {
       const parts = [ai.aiPriorityReason];
-      if (duplicateResult?.reason) parts.push(duplicateResult.reason);
+      if (duplicateResult?.reason) {parts.push(duplicateResult.reason);}
       return parts.filter(Boolean).join(' · ');
 };
 

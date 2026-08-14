@@ -20,7 +20,7 @@ export const fileComplaint = async (req, res, next) => {
             const { title, description, category, location } = req.body;
 
             const { isValid, errors } = validateComplaint({ title, description, category });
-            if (!isValid) return res.status(400).json({ success: false, message: 'Validation failed', errors });
+            if (!isValid) {return res.status(400).json({ success: false, message: 'Validation failed', errors });}
 
             // AI analysis — citizen cannot override priority
             const ai = analyzeComplaint(title, description);
@@ -125,21 +125,21 @@ export const getComplaints = async (req, res, next) => {
                   query.citizen = req.user._id;
             } else if (req.user.role === 'officer') {
                   const dept = await Department.findOne({ slug: req.user.department });
-                  if (dept) query.department = dept._id;
+                  if (dept) {query.department = dept._id;}
             } else if (req.user.role === 'admin') {
                   const { getAdminScope, buildComplaintFilter } = await import('../utils/adminScope.js');
                   const scope = await getAdminScope(req.user);
                   Object.assign(query, await buildComplaintFilter(scope));
             }
 
-            if (status) query.status = status;
-            if (category) query.category = category;
-            if (priority) query.priority = priority;
-            if (search) query.$or = [
+            if (status) {query.status = status;}
+            if (category) {query.category = category;}
+            if (priority) {query.priority = priority;}
+            if (search) {query.$or = [
                   { title: { $regex: search, $options: 'i' } },
                   { description: { $regex: search, $options: 'i' } },
                   { complaintId: { $regex: search, $options: 'i' } },
-            ];
+            ];}
 
             const skip = (parseInt(page) - 1) * parseInt(limit);
             const total = await Complaint.countDocuments(query);
@@ -173,7 +173,7 @@ export const getComplaint = async (req, res, next) => {
                   .populate('department', 'name slug color icon contactEmail')
                   .populate('timeline.updatedBy', 'name role');
 
-            if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+            if (!complaint) {return res.status(404).json({ success: false, message: 'Complaint not found' });}
 
             // Citizens can only view their own
             if (req.user.role === 'citizen' && complaint.citizen._id.toString() !== req.user._id.toString()) {
@@ -191,14 +191,14 @@ export const updateStatus = async (req, res, next) => {
       try {
             const { status, note } = req.body;
             const { isValid, errors } = validateStatusUpdate({ status });
-            if (!isValid) return res.status(400).json({ success: false, errors });
+            if (!isValid) {return res.status(400).json({ success: false, errors });}
 
             const complaint = await Complaint.findById(req.params.id).populate('citizen', 'name');
-            if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+            if (!complaint) {return res.status(404).json({ success: false, message: 'Complaint not found' });}
 
             const prevStatus = complaint.status;
             complaint.status = status;
-            if (status === 'resolved') complaint.resolvedAt = new Date();
+            if (status === 'resolved') {complaint.resolvedAt = new Date();}
 
             complaint.timeline.push({
                   status,
@@ -244,10 +244,10 @@ export const updateStatus = async (req, res, next) => {
 export const assignComplaint = async (req, res, next) => {
       try {
             const { officerId } = req.body;
-            if (!officerId) return res.status(400).json({ success: false, message: 'Officer ID is required' });
+            if (!officerId) {return res.status(400).json({ success: false, message: 'Officer ID is required' });}
 
             const officer = await User.findOne({ _id: officerId, role: 'officer', isActive: true });
-            if (!officer) return res.status(404).json({ success: false, message: 'Officer not found' });
+            if (!officer) {return res.status(404).json({ success: false, message: 'Officer not found' });}
 
             const complaint = await Complaint.findByIdAndUpdate(
                   req.params.id,
@@ -265,7 +265,7 @@ export const assignComplaint = async (req, res, next) => {
                   { new: true }
             );
 
-            if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+            if (!complaint) {return res.status(404).json({ success: false, message: 'Complaint not found' });}
 
             // Log activity
             await activityLogger.logComplaintAssigned(
@@ -287,7 +287,7 @@ export const assignComplaint = async (req, res, next) => {
 export const upvoteComplaint = async (req, res, next) => {
       try {
             const complaint = await Complaint.findById(req.params.id);
-            if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+            if (!complaint) {return res.status(404).json({ success: false, message: 'Complaint not found' });}
 
             const alreadyVoted = complaint.upvotes.includes(req.user._id);
             if (alreadyVoted) {
@@ -319,7 +319,7 @@ export const submitFeedback = async (req, res, next) => {
             }
 
             const complaint = await Complaint.findOne({ _id: req.params.id, citizen: req.user._id });
-            if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+            if (!complaint) {return res.status(404).json({ success: false, message: 'Complaint not found' });}
             if (complaint.status !== 'resolved') {
                   return res.status(400).json({ success: false, message: 'Feedback can only be submitted for resolved complaints' });
             }

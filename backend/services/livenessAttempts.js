@@ -16,7 +16,7 @@ function normalizeEmail(email) {
 
 export async function getOrCreateAttemptRecord(email, userId = null) {
       const key = normalizeEmail(email);
-      if (!key) return null;
+      if (!key) {return null;}
 
       let record = await LivenessAttempt.findOne({ email: key });
       if (!record) {
@@ -32,7 +32,7 @@ export async function getOrCreateAttemptRecord(email, userId = null) {
 
 /** If cooldown expired, reset attempts and unblock */
 export async function refreshAttemptRecord(record) {
-      if (!record) return record;
+      if (!record) {return record;}
 
       const now = Date.now();
       if (record.blockedUntil && record.blockedUntil.getTime() <= now) {
@@ -45,7 +45,7 @@ export async function refreshAttemptRecord(record) {
 }
 
 export function getRetryAfterSeconds(blockedUntil) {
-      if (!blockedUntil) return 0;
+      if (!blockedUntil) {return 0;}
       return Math.max(0, Math.ceil((blockedUntil.getTime() - Date.now()) / 1000));
 }
 
@@ -65,7 +65,7 @@ export async function assertCanAttemptLiveness(email, userId = null) {
       }
 
       const record = await refreshAttemptRecord(await getOrCreateAttemptRecord(email, userId));
-      if (!record) return null;
+      if (!record) {return null;}
 
       console.log('[liveness] Attempt check:', {
             email: record.email,
@@ -101,10 +101,10 @@ export async function assertCanAttemptLiveness(email, userId = null) {
 
 /** Record a failed verification attempt */
 export async function recordLivenessFailure(email, userId = null) {
-      if (isDevBypass()) return null;
+      if (isDevBypass()) {return null;}
 
       const record = await refreshAttemptRecord(await getOrCreateAttemptRecord(email, userId));
-      if (!record) return null;
+      if (!record) {return null;}
 
       record.attempts += 1;
       record.lastAttemptAt = new Date();
@@ -122,7 +122,7 @@ export async function recordLivenessFailure(email, userId = null) {
 /** Clear attempts after successful verification */
 export async function resetLivenessAttempts(email) {
       const key = normalizeEmail(email);
-      if (!key) return;
+      if (!key) {return;}
 
       await LivenessAttempt.findOneAndUpdate(
             { email: key },
@@ -135,7 +135,7 @@ export async function resetLivenessAttempts(email) {
 /** Dev / admin: full reset for an email */
 export async function forceResetLivenessAttempts(email) {
       const key = normalizeEmail(email);
-      if (!key) return { deletedSessions: 0 };
+      if (!key) {return { deletedSessions: 0 };}
 
       await LivenessAttempt.findOneAndDelete({ email: key });
       const del = await LivenessSession.deleteMany({ email: key });
@@ -195,7 +195,7 @@ export async function cleanupLivenessData() {
 
 /** Reset all attempt blocks on server start (dev only) */
 export async function autoResetOnStartup() {
-      if (process.env.AUTO_RESET_LIVENESS !== 'true') return;
+      if (process.env.AUTO_RESET_LIVENESS !== 'true') {return;}
       const r = await LivenessAttempt.updateMany({}, { attempts: 0, blockedUntil: null });
       console.log('[liveness] AUTO_RESET_LIVENESS — cleared', r.modifiedCount, 'attempt records');
 }

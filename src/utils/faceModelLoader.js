@@ -36,7 +36,7 @@ export async function validateModelsExist(baseUrl = getModelsBaseUrl()) {
       const missing = [];
       for (const file of REQUIRED_MODEL_FILES) {
             const ok = await checkModelFile(`${baseUrl}/${file}`);
-            if (!ok) missing.push(file);
+            if (!ok) {missing.push(file);}
       }
       return { valid: missing.length === 0, missing, baseUrl };
 }
@@ -45,8 +45,8 @@ export async function validateModelsWithRetry(retries = 2, delayMs = 500) {
       let last;
       for (let i = 0; i <= retries; i++) {
             last = await validateModelsExist();
-            if (last.valid) return last;
-            if (i < retries) await new Promise((r) => setTimeout(r, delayMs * (i + 1)));
+            if (last.valid) {return last;}
+            if (i < retries) {await new Promise((r) => setTimeout(r, delayMs * (i + 1)));}
       }
       return last;
 }

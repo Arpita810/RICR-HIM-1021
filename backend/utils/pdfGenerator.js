@@ -6,7 +6,7 @@ import path from 'path';
  * Safe for special characters (replaces non-ASCII characters with standard ASCII equivalents).
  */
 const wrapText = (text, maxChars = 85) => {
-      if (!text) return [];
+      if (!text) {return [];}
 
       // Clean up string to avoid encoding issues in standard PDF Helvetica fonts (WinAnsiEncoding)
       const cleanText = text
@@ -48,7 +48,7 @@ const wrapText = (text, maxChars = 85) => {
  * Escapes special characters for PDF text streams.
  */
 const escapePdfText = (text) => {
-      if (!text) return '';
+      if (!text) {return '';}
       return text
             .replace(/\\/g, '\\\\')
             .replace(/\(/g, '\\(')
@@ -270,7 +270,7 @@ export const generateResolutionPdf = async (complaint, citizen, officer, resolve
                   stream += 'BT\n';
                   stream += '/F2 9 Tf\n';
                   stream += '0.5 0.1 0.1 rg\n';
-                  stream += `50 75 Td\n`;
+                  stream += '50 75 Td\n';
                   stream += `(${escapePdfText('[Report continues on official e-Samadhan portal...]')}) Tj\n`;
                   stream += 'ET\n';
                   break;

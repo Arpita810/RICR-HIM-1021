@@ -34,6 +34,6 @@ export function validateFrontendEnv() {
 
 export function getEnvConfigErrors() {
       const { missing } = validateFrontendEnv();
-      if (missing.length === 0) return null;
+      if (missing.length === 0) {return null;}
       return missing.map((m) => `${m.key}: ${m.description}`).join('\n');
 }

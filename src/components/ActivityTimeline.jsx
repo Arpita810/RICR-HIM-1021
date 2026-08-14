@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
       Clock, User, FileText, CheckCircle, AlertCircle,
@@ -115,7 +115,7 @@ const ActivityTimeline = ({ complaintId, showHeader = true, limit = 20, autoRefr
 
       // Auto-refresh every 30 seconds if enabled
       useEffect(() => {
-            if (!autoRefresh || !complaintId) return;
+            if (!autoRefresh || !complaintId) {return;}
 
             const interval = setInterval(() => {
                   fetchActivities(1, false);
@@ -159,12 +159,12 @@ const ActivityTimeline = ({ complaintId, showHeader = true, limit = 20, autoRefr
                   const diffMonth = Math.floor(diffDay / 30);
                   const diffYear = Math.floor(diffDay / 365);
 
-                  if (diffSec < 60) return 'just now';
-                  if (diffMin < 60) return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
-                  if (diffHour < 24) return `${diffHour} hour${diffHour > 1 ? 's' : ''} ago`;
-                  if (diffDay < 7) return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
-                  if (diffWeek < 4) return `${diffWeek} week${diffWeek > 1 ? 's' : ''} ago`;
-                  if (diffMonth < 12) return `${diffMonth} month${diffMonth > 1 ? 's' : ''} ago`;
+                  if (diffSec < 60) {return 'just now';}
+                  if (diffMin < 60) {return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;}
+                  if (diffHour < 24) {return `${diffHour} hour${diffHour > 1 ? 's' : ''} ago`;}
+                  if (diffDay < 7) {return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;}
+                  if (diffWeek < 4) {return `${diffWeek} week${diffWeek > 1 ? 's' : ''} ago`;}
+                  if (diffMonth < 12) {return `${diffMonth} month${diffMonth > 1 ? 's' : ''} ago`;}
                   return `${diffYear} year${diffYear > 1 ? 's' : ''} ago`;
             } catch {
                   return '';
@@ -185,7 +185,7 @@ const ActivityTimeline = ({ complaintId, showHeader = true, limit = 20, autoRefr
       };
 
       const renderActivityDetails = (activity) => {
-            if (!activity.metadata) return null;
+            if (!activity.metadata) {return null;}
 
             switch (activity.actionType) {
                   case 'status_changed':
@@ -262,7 +262,7 @@ const ActivityTimeline = ({ complaintId, showHeader = true, limit = 20, autoRefr
       };
 
       const renderUserInfo = (activity) => {
-            if (!activity.performedBy) return null;
+            if (!activity.performedBy) {return null;}
 
             const user = activity.performedBy;
             return (

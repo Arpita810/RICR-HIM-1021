@@ -94,7 +94,7 @@ export const sendOTP = async (req, res, next) => {
             if (process.env.NODE_ENV === 'development') {
                   return res.status(200).json({
                         success: true,
-                        message: `OTP generated! Email delivery failed (dev mode). Check server console for the OTP code.`,
+                        message: 'OTP generated! Email delivery failed (dev mode). Check server console for the OTP code.',
                         devNote: `SMTP not working: ${emailError}. OTP is printed in the server terminal.`,
                   });
             }

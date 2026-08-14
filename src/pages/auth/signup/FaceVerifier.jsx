@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Webcam from 'react-webcam';
 import {
@@ -83,7 +83,7 @@ export default function FaceVerifier({ documentFile, onVerified, onReset }) {
             setStep('');
             setProgress(0);
             onReset?.();
-            if (!isModelsLoaded()) preloadModels();
+            if (!isModelsLoaded()) {preloadModels();}
       };
 
       const openCamera = () => {
@@ -115,11 +115,11 @@ export default function FaceVerifier({ documentFile, onVerified, onReset }) {
 
       // Live face detection + liveness + auto-capture
       useEffect(() => {
-            if (phase !== PHASE.CAMERA || !isModelsLoaded()) return;
+            if (phase !== PHASE.CAMERA || !isModelsLoaded()) {return;}
 
             detectIntervalRef.current = setInterval(async () => {
                   const video = webcamRef.current?.video;
-                  if (!video || video.readyState < 2) return;
+                  if (!video || video.readyState < 2) {return;}
 
                   try {
                         const detections = await detectFaceInVideo(video);
@@ -167,7 +167,7 @@ export default function FaceVerifier({ documentFile, onVerified, onReset }) {
       }, [phase, capture, stopDetection]);
 
       const runVerification = async () => {
-            if (!documentFile || !selfie) return;
+            if (!documentFile || !selfie) {return;}
             setPhase(PHASE.VERIFYING);
             setProgress(0);
             const steps = ['Loading AI models...', 'Detecting face in document...', 'Detecting face in selfie...', 'Comparing faces...'];

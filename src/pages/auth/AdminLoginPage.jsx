@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -64,13 +64,13 @@ export default function AdminLoginPage() {
 
             const errs = {};
 
-            if (!form.email.trim()) errs.email = t('validation.emailRequired');
+            if (!form.email.trim()) {errs.email = t('validation.emailRequired');}
 
-            else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = t('validation.enterValidEmail');
+            else if (!/^\S+@\S+\.\S+$/.test(form.email)) {errs.email = t('validation.enterValidEmail');}
 
-            if (!form.password) errs.password = t('validation.passwordRequired');
+            if (!form.password) {errs.password = t('validation.passwordRequired');}
 
-            if (!form.department) errs.department = t('validation.departmentRequired');
+            if (!form.department) {errs.department = t('validation.departmentRequired');}
 
             setErrors(errs);
 
@@ -386,7 +386,7 @@ export default function AdminLoginPage() {
 
                                                                   setForm({ ...form, email: e.target.value });
 
-                                                                  if (errors.email) setErrors((p) => ({ ...p, email: '' }));
+                                                                  if (errors.email) {setErrors((p) => ({ ...p, email: '' }));}
 
                                                             }}
 
@@ -424,7 +424,7 @@ export default function AdminLoginPage() {
 
                                                                   setForm({ ...form, password: e.target.value });
 
-                                                                  if (errors.password) setErrors((p) => ({ ...p, password: '' }));
+                                                                  if (errors.password) {setErrors((p) => ({ ...p, password: '' }));}
 
                                                             }}
 
@@ -476,7 +476,7 @@ export default function AdminLoginPage() {
 
                                                                   setForm({ ...form, department: e.target.value });
 
-                                                                  if (errors.department) setErrors((p) => ({ ...p, department: '' }));
+                                                                  if (errors.department) {setErrors((p) => ({ ...p, department: '' }));}
 
                                                             }}
 

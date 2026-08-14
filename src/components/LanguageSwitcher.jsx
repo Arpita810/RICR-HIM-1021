@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, ChevronDown, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -44,7 +44,7 @@ export default function LanguageSwitcher({
       // Close on outside click
       useEffect(() => {
             const handler = (e) => {
-                  if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+                  if (ref.current && !ref.current.contains(e.target)) {setOpen(false);}
             };
             document.addEventListener('mousedown', handler);
             return () => document.removeEventListener('mousedown', handler);
@@ -58,7 +58,7 @@ export default function LanguageSwitcher({
       };
 
       // ── Button styles per variant ──────────────────────────────────────────────
-      const btnBase = `flex items-center gap-1.5 rounded-xl font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-300`;
+      const btnBase = 'flex items-center gap-1.5 rounded-xl font-semibold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-300';
 
       const btnStyles = {
             default: `${btnBase} px-3 py-2 ${darkBg

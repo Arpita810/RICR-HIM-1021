@@ -16,7 +16,7 @@ const TASK_POOL = ['blink', 'turn_left', 'turn_right'];
 function pickTasks(count = 3) {
       const shuffled = [...TASK_POOL].sort(() => Math.random() - 0.5);
       const tasks = shuffled.slice(0, count);
-      if (!tasks.includes('blink')) tasks[tasks.length - 1] = 'blink';
+      if (!tasks.includes('blink')) {tasks[tasks.length - 1] = 'blink';}
       return [...new Set(tasks)];
 }
 

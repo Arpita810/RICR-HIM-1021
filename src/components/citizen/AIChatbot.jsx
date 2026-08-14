@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ function getReply(msg, t) {
             { keys: ['emergency', 'आपातकाल', 'आपत्कालीन'], textKey: 'chatbot.replyEmergency' },
       ];
       for (const r of REPLIES) {
-            if (r.keys.some((k) => lower.includes(k))) return t(r.textKey);
+            if (r.keys.some((k) => lower.includes(k))) {return t(r.textKey);}
       }
       return t('chatbot.replyDefault');
 }
@@ -34,7 +34,7 @@ export default function AIChatbot() {
 
       const send = (e) => {
             e.preventDefault();
-            if (!input.trim()) return;
+            if (!input.trim()) {return;}
             const userMsg = input.trim();
             const current = getMessages();
             setMessages([...current, { role: 'user', text: userMsg }, { role: 'bot', text: getReply(userMsg, t) }]);

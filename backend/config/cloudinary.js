@@ -26,7 +26,7 @@ export const initCloudinary = async () => {
 };
 
 export const uploadToCloud = async (filePath, folder = 'esamadhan') => {
-      if (!cloudinary) return null;
+      if (!cloudinary) {return null;}
       const result = await cloudinary.uploader.upload(filePath, {
             folder,
             resource_type: 'auto',
@@ -35,7 +35,7 @@ export const uploadToCloud = async (filePath, folder = 'esamadhan') => {
 };
 
 export const deleteFromCloud = async (publicId) => {
-      if (!cloudinary) return;
+      if (!cloudinary) {return;}
       await cloudinary.uploader.destroy(publicId);
 };
 

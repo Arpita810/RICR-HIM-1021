@@ -127,7 +127,7 @@ export const login = async (req, res, next) => {
             const user = await User.findOne({ email }).select('+password');
             if (!user || !(await user.matchPassword(password))) {
                   // Increment login attempts on failure (if user exists)
-                  if (user) await user.incrementLoginAttempts();
+                  if (user) {await user.incrementLoginAttempts();}
                   return res.status(401).json({ success: false, message: 'Invalid email or password' });
             }
 
@@ -214,7 +214,7 @@ export const getMe = async (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
       try {
             const { email } = req.body;
-            if (!email) return res.status(400).json({ success: false, message: 'Email is required' });
+            if (!email) {return res.status(400).json({ success: false, message: 'Email is required' });}
 
             const user = await User.findOne({ email });
             if (!user) {
@@ -247,7 +247,7 @@ export const resetPassword = async (req, res, next) => {
             }
             const hashed = crypto.createHash('sha256').update(req.params.token).digest('hex');
             const user = await User.findOne({ resetPasswordToken: hashed, resetPasswordExpire: { $gt: Date.now() } });
-            if (!user) return res.status(400).json({ success: false, message: 'Invalid or expired token.' });
+            if (!user) {return res.status(400).json({ success: false, message: 'Invalid or expired token.' });}
 
             user.password = password;
             user.resetPasswordToken = undefined;

@@ -25,8 +25,8 @@ export function isAuthError(error) {
 }
 
 export function parseApiResponse(data) {
-      if (data == null) return null;
-      if (typeof data === 'object') return data;
+      if (data == null) {return null;}
+      if (typeof data === 'object') {return data;}
       try {
             return JSON.parse(data);
       } catch {
@@ -35,20 +35,20 @@ export function parseApiResponse(data) {
 }
 
 export function getErrorMessage(error, fallback = 'Something went wrong. Please try again.') {
-      if (!error) return fallback;
+      if (!error) {return fallback;}
 
       if (isNetworkError(error)) {
             return 'Unable to reach the server. Check your connection or try again later.';
       }
 
       const data = parseApiResponse(error.response?.data);
-      if (data?.message && typeof data.message === 'string') return data.message;
+      if (data?.message && typeof data.message === 'string') {return data.message;}
       if (typeof error.response?.data === 'string' && error.response.data.trim()) {
             return error.response.data;
       }
 
       const status = error.response?.status;
-      if (status && STATUS_MESSAGES[status]) return STATUS_MESSAGES[status];
+      if (status && STATUS_MESSAGES[status]) {return STATUS_MESSAGES[status];}
 
       if (error.message && !error.message.includes('Request failed with status')) {
             return error.message;

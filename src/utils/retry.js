@@ -28,9 +28,9 @@ export async function retry(fn, options = {}) {
 }
 
 export function isRetryableError(error) {
-      if (!error) return false;
-      if (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') return true;
-      if (!error.response) return true;
+      if (!error) {return false;}
+      if (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') {return true;}
+      if (!error.response) {return true;}
       const status = error.response.status;
       return status >= 500 || status === 408 || status === 429;
 }

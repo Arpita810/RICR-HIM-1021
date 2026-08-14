@@ -57,7 +57,7 @@ export function ensureUploadDirs() {
  * @returns {number} count of deleted files
  */
 function clearDirectory(dirPath) {
-      if (!fs.existsSync(dirPath)) return 0;
+      if (!fs.existsSync(dirPath)) {return 0;}
 
       let count = 0;
       try {
@@ -111,7 +111,7 @@ export function cleanupUploadedFiles() {
  * @param {string} filePath  Absolute or relative path to the file
  */
 export function deleteUploadedFile(filePath) {
-      if (!filePath) return;
+      if (!filePath) {return;}
       try {
             const abs = path.isAbsolute(filePath)
                   ? filePath

@@ -50,13 +50,13 @@ export function PasswordInput({ show, onToggle, icon: Icon, error, ...props }) {
 
 // ── Password strength meter ───────────────────────────────────────────────────
 export function PasswordStrength({ password }) {
-      if (!password) return null;
+      if (!password) { return null; }
       let score = 0;
-      if (password.length >= 8) score++;
-      if (/[A-Z]/.test(password)) score++;
-      if (/[a-z]/.test(password)) score++;
-      if (/\d/.test(password)) score++;
-      if (/[^A-Za-z0-9]/.test(password)) score++;
+      if (password.length >= 8) { score++; }
+      if (/[A-Z]/.test(password)) { score++; }
+      if (/[a-z]/.test(password)) { score++; }
+      if (/\d/.test(password)) { score++; }
+      if (/[^A-Za-z0-9]/.test(password)) { score++; }
 
       const levels = [
             { label: 'Very Weak', color: 'bg-red-500', width: '20%' },
@@ -79,7 +79,7 @@ export function PasswordStrength({ password }) {
 
 // ── Password match indicator ──────────────────────────────────────────────────
 export function PasswordMatch({ password, confirm }) {
-      if (!confirm) return null;
+      if (!confirm) { return null; }
       if (password === confirm) {
             return <p className="mt-1 text-xs text-emerald-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Passwords match</p>;
       }
@@ -130,7 +130,7 @@ export function SectionHeader({ icon, title, color = 'text-blue-600 bg-blue-50' 
 
 // ── Error alert ───────────────────────────────────────────────────────────────
 export function ErrorAlert({ message }) {
-      if (!message) return null;
+      if (!message) { return null; }
       return (
             <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 flex items-start gap-2">
                   <span className="w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">!</span>
@@ -165,8 +165,8 @@ export function OTPSection({ email, otpSent, otpVerified, otp, setOtp, timer, on
                   arr[index] = '';
                   setOtp(arr.join(''));
             }
-            if (e.key === 'ArrowLeft' && index > 0) inputRefs.current[index - 1]?.focus();
-            if (e.key === 'ArrowRight' && index < 5) inputRefs.current[index + 1]?.focus();
+            if (e.key === 'ArrowLeft' && index > 0) { inputRefs.current[index - 1]?.focus(); }
+            if (e.key === 'ArrowRight' && index < 5) { inputRefs.current[index + 1]?.focus(); }
       };
 
       const handlePaste = (e) => {
@@ -250,8 +250,8 @@ export function OTPSection({ email, otpSent, otpVerified, otp, setOtp, timer, on
                                                       onKeyDown={e => handleKeyDown(i, e)}
                                                       whileFocus={{ scale: 1.08 }}
                                                       className={`w-11 h-12 text-center text-xl font-black border-2 rounded-xl focus:outline-none transition-all duration-200 ${otp[i]
-                                                                  ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-md shadow-blue-100'
-                                                                  : 'border-gray-200 bg-white text-gray-900 focus:border-blue-400 focus:ring-2 focus:ring-blue-100'
+                                                            ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-md shadow-blue-100'
+                                                            : 'border-gray-200 bg-white text-gray-900 focus:border-blue-400 focus:ring-2 focus:ring-blue-100'
                                                             }`}
                                                 />
                                           ))}

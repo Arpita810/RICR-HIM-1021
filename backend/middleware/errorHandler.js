@@ -106,9 +106,9 @@ const errorHandler = (err, req, res, next) => {
             code,
       };
 
-      if (err.retryAfterSeconds != null) payload.retryAfterSeconds = err.retryAfterSeconds;
-      if (err.blockedUntil) payload.blockedUntil = err.blockedUntil;
-      if (err.attempts != null) payload.attempts = err.attempts;
+      if (err.retryAfterSeconds != null) {payload.retryAfterSeconds = err.retryAfterSeconds;}
+      if (err.blockedUntil) {payload.blockedUntil = err.blockedUntil;}
+      if (err.attempts != null) {payload.attempts = err.attempts;}
 
       res.status(statusCode).json({
             ...payload,

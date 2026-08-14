@@ -74,14 +74,14 @@ api.interceptors.response.use(
                               })
                         );
                   }
-                  if (parsed !== null) response.data = parsed;
+                  if (parsed !== null) {response.data = parsed;}
             }
             return response;
       },
       async (error) => {
             const config = error.config;
 
-            if (!config) return Promise.reject(error);
+            if (!config) {return Promise.reject(error);}
 
             const shouldRetry =
                   config._retryCount < 3 &&

@@ -34,16 +34,16 @@ export async function getAdminScope(user) {
 }
 
 export async function buildComplaintFilter(scope) {
-      if (!scope || scope.isSuper) return {};
-      if (scope.departmentId) return { department: scope.departmentId };
-      if (scope.departmentSlug) return { category: scope.departmentSlug };
+      if (!scope || scope.isSuper) {return {};}
+      if (scope.departmentId) {return { department: scope.departmentId };}
+      if (scope.departmentSlug) {return { category: scope.departmentSlug };}
       return { _id: null };
 }
 
 export function buildOfficerFilter(scope, extra = {}) {
       const base = { role: 'officer', ...extra };
-      if (!scope || scope.isSuper) return base;
-      if (scope.departmentSlug) return { ...base, department: scope.departmentSlug };
+      if (!scope || scope.isSuper) {return base;}
+      if (scope.departmentSlug) {return { ...base, department: scope.departmentSlug };}
       return { ...base, _id: null };
 }
 
@@ -57,9 +57,9 @@ export const attachAdminScope = async (req, res, next) => {
 };
 
 export async function assertComplaintAccess(scope, complaint) {
-      if (!complaint) return false;
-      if (scope.isSuper) return true;
-      if (scope.departmentId && complaint.department?.toString() === scope.departmentId.toString()) return true;
-      if (scope.departmentSlug && complaint.category === scope.departmentSlug) return true;
+      if (!complaint) {return false;}
+      if (scope.isSuper) {return true;}
+      if (scope.departmentId && complaint.department?.toString() === scope.departmentId.toString()) {return true;}
+      if (scope.departmentSlug && complaint.category === scope.departmentSlug) {return true;}
       return false;
 }

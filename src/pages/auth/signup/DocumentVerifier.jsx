@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
       Upload, FileText, CheckCircle2, XCircle, Loader2,
@@ -82,8 +82,8 @@ const extractAadhaarDetails = (text) => {
       for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             // Skip short lines, all-digit lines, keyword lines
-            if (line.length < 3) continue;
-            if (skipPatterns.test(line)) continue;
+            if (line.length < 3) {continue;}
+            if (skipPatterns.test(line)) {continue;}
             // Must contain at least one space (first + last name) or be a single proper name
             if (/^[A-Za-z\s\.]+$/.test(line) && line.length >= 4) {
                   name = line.replace(/\s+/g, ' ').trim();
@@ -100,7 +100,7 @@ const STATUS = { IDLE: 'idle', UPLOADING: 'uploading', SCANNING: 'scanning', SUC
 const validateLocally = (text, selectedType) => {
       const lower = text.toLowerCase();
       const rules = DOC_RULES[selectedType];
-      if (!rules) return { valid: false, message: 'Unknown document type' };
+      if (!rules) {return { valid: false, message: 'Unknown document type' };}
 
       // Detect what the document actually is
       let detectedType = null;
@@ -162,7 +162,7 @@ export default function DocumentVerifier({ selectedType, onVerified, onReset }) 
       };
 
       const processFile = useCallback(async (f) => {
-            if (!f) return;
+            if (!f) {return;}
 
             // Validate file type
             const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
@@ -264,15 +264,15 @@ export default function DocumentVerifier({ selectedType, onVerified, onReset }) 
             e.preventDefault();
             setDragOver(false);
             const f = e.dataTransfer.files[0];
-            if (f) processFile(f);
+            if (f) {processFile(f);}
       };
 
       const handleFileChange = (e) => {
             const f = e.target.files[0];
-            if (f) processFile(f);
+            if (f) {processFile(f);}
       };
 
-      if (!selectedType) return null;
+      if (!selectedType) {return null;}
 
       return (
             <div className="space-y-4">
@@ -297,7 +297,7 @@ export default function DocumentVerifier({ selectedType, onVerified, onReset }) 
                         {status === STATUS.IDLE && (
                               <motion.div key="idle" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                                     <div
-                                          onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+                                          onDragOver={e => { e.preventDefault(); setDragOver(true); }}
                                           onDragLeave={() => setDragOver(false)}
                                           onDrop={handleDrop}
                                           onClick={() => inputRef.current?.click()}

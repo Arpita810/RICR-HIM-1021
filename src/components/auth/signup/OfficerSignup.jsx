@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Building2, Contact, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
@@ -43,36 +43,36 @@ export default function OfficerSignup({ onBack }) {
       const validateStep = () => {
             const e = {};
             if (step === 0) {
-                  if (!form.name.trim() || form.name.length < 3) e.name = 'Enter full name';
-                  if (!form.email || !/^\S+@\S+\.\S+$/.test(form.email)) e.email = 'Enter valid official email';
-                  if (!form.phone || !/^[6-9]\d{9}$/.test(form.phone)) e.phone = 'Enter valid 10-digit mobile';
-                  if (!form.password || form.password.length < 8) e.password = 'Min 8 characters';
-                  if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
+                  if (!form.name.trim() || form.name.length < 3) {e.name = 'Enter full name';}
+                  if (!form.email || !/^\S+@\S+\.\S+$/.test(form.email)) {e.email = 'Enter valid official email';}
+                  if (!form.phone || !/^[6-9]\d{9}$/.test(form.phone)) {e.phone = 'Enter valid 10-digit mobile';}
+                  if (!form.password || form.password.length < 8) {e.password = 'Min 8 characters';}
+                  if (form.password !== form.confirmPassword) {e.confirmPassword = 'Passwords do not match';}
             }
             if (step === 1) {
-                  if (!form.department) e.department = 'Select your department';
-                  if (!form.employeeId.trim()) e.employeeId = 'Employee ID is required';
+                  if (!form.department) {e.department = 'Select your department';}
+                  if (!form.employeeId.trim()) {e.employeeId = 'Employee ID is required';}
             }
             if (step === 2) {
-                  if (!otpVerified) e.otp = 'Please verify your email with OTP';
+                  if (!otpVerified) {e.otp = 'Please verify your email with OTP';}
             }
             setErrors(e);
             return Object.keys(e).length === 0;
       };
 
-      const next = () => { if (validateStep()) setStep(s => s + 1); };
+      const next = () => { if (validateStep()) {setStep(s => s + 1);} };
       const prev = () => setStep(s => s - 1);
 
       const handleSubmit = async (e) => {
             e.preventDefault();
-            if (!validateStep()) return;
+            if (!validateStep()) {return;}
             setLoading(true);
             try {
                   const fd = new FormData();
-                  Object.entries(form).forEach(([k, v]) => { if (v && k !== 'govtIdImage') fd.append(k, v); });
+                  Object.entries(form).forEach(([k, v]) => { if (v && k !== 'govtIdImage') {fd.append(k, v);} });
                   fd.append('role', 'officer');
                   fd.append('otpVerified', 'true');
-                  if (form.govtIdImage) fd.append('govtIdImage', form.govtIdImage);
+                  if (form.govtIdImage) {fd.append('govtIdImage', form.govtIdImage);}
                   if (liveImage) {
                         const res = await fetch(liveImage);
                         const blob = await res.blob();

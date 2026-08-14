@@ -7,10 +7,10 @@ function getDashboardHref() {
       try {
             // Check officer session first (isolated keys)
             const officer = readStoredOfficer();
-            if (officer?.role === 'officer') return '/officer/dashboard';
+            if (officer?.role === 'officer') { return '/officer/dashboard'; }
             // Then admin/citizen
             const user = readStoredAuth();
-            if (!user?.role) return null;
+            if (!user?.role) { return null; }
             switch (user.role) {
                   case 'admin': return '/admin/dashboard';
                   case 'citizen': return '/citizen/dashboard';

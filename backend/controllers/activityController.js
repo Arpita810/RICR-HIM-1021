@@ -91,7 +91,7 @@ export const getDashboardActivities = asyncHandler(async (req, res) => {
 
       console.log(`📋 [activityController] Fetching dashboard activities for ${req.user.role}`);
 
-      let query = {};
+      const query = {};
 
       // For officers, only show activities from their department
       if (req.user.role === 'officer' && req.user.department) {

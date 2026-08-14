@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const MODELS_DIR = path.join(__dirname, '..', 'public', 'models');
 
-if (!fs.existsSync(MODELS_DIR)) fs.mkdirSync(MODELS_DIR, { recursive: true });
+if (!fs.existsSync(MODELS_DIR)) {fs.mkdirSync(MODELS_DIR, { recursive: true });}
 
 const BASE = 'https://raw.githubusercontent.com/vladmandic/face-api/master/model';
 

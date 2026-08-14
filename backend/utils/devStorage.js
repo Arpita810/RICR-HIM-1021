@@ -55,7 +55,7 @@ export function ensureDataDirs() {
 
 /** Write a JSON snapshot for a collection */
 export function writeSnapshot(collectionName, data) {
-      if (process.env.NODE_ENV === 'production') return;
+      if (process.env.NODE_ENV === 'production') {return;}
 
       try {
             const filePath = path.join(DATA_DIR, `${collectionName}.json`);
@@ -70,7 +70,7 @@ export function writeSnapshot(collectionName, data) {
 export function readSnapshot(collectionName) {
       try {
             const filePath = path.join(DATA_DIR, `${collectionName}.json`);
-            if (!fs.existsSync(filePath)) return [];
+            if (!fs.existsSync(filePath)) {return [];}
             return JSON.parse(fs.readFileSync(filePath, 'utf8'));
       } catch {
             return [];
@@ -82,10 +82,10 @@ export function readSnapshot(collectionName) {
  * Called on server shutdown.
  */
 export function clearAllSnapshots() {
-      if (process.env.NODE_ENV === 'production') return;
+      if (process.env.NODE_ENV === 'production') {return;}
 
       try {
-            if (!fs.existsSync(DATA_DIR)) return;
+            if (!fs.existsSync(DATA_DIR)) {return;}
 
             let count = 0;
 
@@ -125,7 +125,7 @@ export function clearAllSnapshots() {
  * Called on startup so the data/ folder always has a known structure.
  */
 export function initializeSnapshots() {
-      if (process.env.NODE_ENV === 'production') return;
+      if (process.env.NODE_ENV === 'production') {return;}
 
       const collections = [
             'users', 'admins', 'officers', 'complaints',

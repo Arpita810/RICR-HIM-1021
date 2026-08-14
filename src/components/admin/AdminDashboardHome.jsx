@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Clock, CheckCircle2, Siren, Users, Mail, Phone, Calendar, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +30,7 @@ export default function AdminDashboardHome({ departmentName }) {
       }, []);
 
       const formatDate = (date) => {
-            if (!date) return 'N/A';
+            if (!date) {return 'N/A';}
             return new Date(date).toLocaleDateString('en-IN', {
                   day: '2-digit',
                   month: 'short',

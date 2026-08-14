@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,7 @@ export default function PageLoader({
       const displayMessage = message ?? t('pageLoader.loading');
 
       useEffect(() => {
-            if (!timeoutMs) return;
+            if (!timeoutMs) {return;}
             const timer = setTimeout(() => setTimedOut(true), timeoutMs);
             return () => clearTimeout(timer);
       }, [timeoutMs]);

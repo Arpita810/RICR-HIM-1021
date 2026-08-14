@@ -13,7 +13,7 @@ export function initSocket(httpServer) {
 
       io.use((socket, next) => {
             const token = socket.handshake.auth?.token;
-            if (!token) return next(new Error('Authentication required'));
+            if (!token) {return next(new Error('Authentication required'));}
             try {
                   const decoded = jwt.verify(token, process.env.JWT_SECRET);
                   socket.userId = decoded.id;
@@ -29,7 +29,7 @@ export function initSocket(httpServer) {
 
       io.on('connection', (socket) => {
             socket.join(`user:${socket.userId}`);
-            if (socket.userRole) socket.join(`role:${socket.userRole}`);
+            if (socket.userRole) {socket.join(`role:${socket.userRole}`);}
             if (socket.userRole === 'admin') {
                   socket.join('admins');
                   if (socket.managedDepartment) {
@@ -51,7 +51,7 @@ export function getIO() {
 }
 
 export function emitToUser(userId, event, payload) {
-      if (!io || !userId) return;
+      if (!io || !userId) {return;}
       io.to(`user:${userId}`).emit(event, payload);
 }
 
@@ -71,7 +71,7 @@ export function emitNotification(userId, notification) {
 }
 
 export function emitToDepartment(departmentSlug, event, payload) {
-      if (!io || !departmentSlug) return;
+      if (!io || !departmentSlug) {return;}
       io.to(`dept:${departmentSlug}`).emit(event, payload);
       io.to('admins').emit(event, payload);
 }
@@ -82,7 +82,7 @@ export function emitAdminAlert(departmentSlug, payload) {
 
 // ── New complaint filed — notify all officers in that department ──────────────
 export function emitNewComplaintToDept(departmentSlug, complaint) {
-      if (!io || !departmentSlug) return;
+      if (!io || !departmentSlug) {return;}
       io.to(`dept:${departmentSlug}`).emit('complaint:new', {
             _id: complaint._id,
             complaintId: complaint.complaintId,
@@ -98,7 +98,7 @@ export function emitNewComplaintToDept(departmentSlug, complaint) {
 
 // ── Complaint accepted from queue — notify dept to remove it from queue ───────
 export function emitComplaintAcceptedToDept(departmentSlug, complaintId, officerName) {
-      if (!io || !departmentSlug) return;
+      if (!io || !departmentSlug) {return;}
       io.to(`dept:${departmentSlug}`).emit('complaint:accepted', {
             complaintId,
             acceptedBy: officerName,

@@ -28,7 +28,7 @@ export function useSocket(handlers = {}, { role = 'auto' } = {}) {
       handlersRef.current = handlers;
 
       useEffect(() => {
-            if (!token) return undefined;
+            if (!token) {return undefined;}
 
             const socket = io(SOCKET_URL, {
                   auth: { token },

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 import api, { setAxiosAuthToken } from '../api/axios';
 
@@ -62,9 +62,9 @@ export const AuthProvider = ({ children }) => {
 
             const u = readStoredAuth();
 
-            if (t) setToken(t);
+            if (t) {setToken(t);}
 
-            if (u) setUser(u);
+            if (u) {setUser(u);}
 
             return Boolean(t && u?.role);
 
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }) => {
 
                   : persistAuthSession(newToken, userData, options);
 
-            if (!saved) return false;
+            if (!saved) {return false;}
 
             setToken(saved.token);
 
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
 
             setInitializing(false);
 
-            if (options.debug) debugAuthStorage();
+            if (options.debug) {debugAuthStorage();}
 
             return true;
 
@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }) => {
       // Sync Bearer header from localStorage on app load
       useEffect(() => {
             const t = readStoredToken();
-            if (t) setAxiosAuthToken(t);
+            if (t) {setAxiosAuthToken(t);}
       }, []);
 
 
@@ -189,7 +189,7 @@ export const AuthProvider = ({ children }) => {
 
             const timeoutId = setTimeout(() => {
 
-                  if (!cancelled) setInitializing(false);
+                  if (!cancelled) {setInitializing(false);}
 
             }, 10000);
 
@@ -290,7 +290,7 @@ export const AuthProvider = ({ children }) => {
 
                   } finally {
 
-                        if (!cancelled) setInitializing(false);
+                        if (!cancelled) {setInitializing(false);}
 
                   }
 
@@ -325,7 +325,7 @@ export const AuthProvider = ({ children }) => {
                   // Only clear if the current context user is not admin
                   const storedUser = readStoredAuth();
 
-                  if (storedUser?.role === 'admin') return;
+                  if (storedUser?.role === 'admin') {return;}
 
                   clearSession();
 
@@ -355,7 +355,7 @@ export const AuthProvider = ({ children }) => {
 
                   const ok = applySession(data.token, data.user, { debug: import.meta.env.DEV });
 
-                  if (!ok) throw new Error('Could not save session');
+                  if (!ok) {throw new Error('Could not save session');}
 
                   return data;
 
@@ -389,7 +389,7 @@ export const AuthProvider = ({ children }) => {
 
                   const ok = applySession(data.token, data.user, { debug: import.meta.env.DEV });
 
-                  if (!ok) throw new Error('Could not save session');
+                  if (!ok) {throw new Error('Could not save session');}
 
                   return data;
 
@@ -558,7 +558,7 @@ export const useAuth = () => {
 
       const ctx = useContext(AuthContext);
 
-      if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+      if (!ctx) {throw new Error('useAuth must be used within AuthProvider');}
 
       return ctx;
 

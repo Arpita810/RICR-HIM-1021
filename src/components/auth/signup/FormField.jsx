@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
 export function FormField({ label, error, icon: Icon, type = 'text', required, children, hint, ...props }) {
@@ -42,13 +42,13 @@ export function FormField({ label, error, icon: Icon, type = 'text', required, c
 }
 
 export function PasswordStrength({ password }) {
-      if (!password) return null;
+      if (!password) {return null;}
       let score = 0;
-      if (password.length >= 8) score++;
-      if (/[A-Z]/.test(password)) score++;
-      if (/[a-z]/.test(password)) score++;
-      if (/\d/.test(password)) score++;
-      if (/[^A-Za-z0-9]/.test(password)) score++;
+      if (password.length >= 8) {score++;}
+      if (/[A-Z]/.test(password)) {score++;}
+      if (/[a-z]/.test(password)) {score++;}
+      if (/\d/.test(password)) {score++;}
+      if (/[^A-Za-z0-9]/.test(password)) {score++;}
 
       const levels = [
             { label: 'Very Weak', color: 'bg-red-500', width: '20%' },
@@ -103,7 +103,7 @@ export function OTPSection({ email, onVerified }) {
                   });
                   const data = await res.json();
                   if (data.success) { setSent(true); startTimer(); }
-                  else setError(data.message);
+                  else {setError(data.message);}
             } catch { setError('Failed to send OTP'); }
             finally { setLoading(false); }
       };
@@ -119,7 +119,7 @@ export function OTPSection({ email, onVerified }) {
                   });
                   const data = await res.json();
                   if (data.success) { setVerified(true); onVerified?.(); }
-                  else setError(data.message);
+                  else {setError(data.message);}
             } catch { setError('Verification failed'); }
             finally { setLoading(false); }
       };

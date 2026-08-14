@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
       Clock, User, FileText, CheckCircle, AlertCircle,
@@ -85,7 +85,7 @@ const DashboardActivityFeed = ({ department, limit = 15, autoRefresh = true }) =
 
       // Auto-refresh every 60 seconds if enabled
       useEffect(() => {
-            if (!autoRefresh) return;
+            if (!autoRefresh) {return;}
 
             const interval = setInterval(() => {
                   fetchActivities();
@@ -145,12 +145,12 @@ const DashboardActivityFeed = ({ department, limit = 15, autoRefresh = true }) =
                   const diffMonth = Math.floor(diffDay / 30);
                   const diffYear = Math.floor(diffDay / 365);
 
-                  if (diffSec < 60) return 'just now';
-                  if (diffMin < 60) return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
-                  if (diffHour < 24) return `${diffHour} hour${diffHour > 1 ? 's' : ''} ago`;
-                  if (diffDay < 7) return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
-                  if (diffWeek < 4) return `${diffWeek} week${diffWeek > 1 ? 's' : ''} ago`;
-                  if (diffMonth < 12) return `${diffMonth} month${diffMonth > 1 ? 's' : ''} ago`;
+                  if (diffSec < 60) {return 'just now';}
+                  if (diffMin < 60) {return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;}
+                  if (diffHour < 24) {return `${diffHour} hour${diffHour > 1 ? 's' : ''} ago`;}
+                  if (diffDay < 7) {return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;}
+                  if (diffWeek < 4) {return `${diffWeek} week${diffWeek > 1 ? 's' : ''} ago`;}
+                  if (diffMonth < 12) {return `${diffMonth} month${diffMonth > 1 ? 's' : ''} ago`;}
                   return `${diffYear} year${diffYear > 1 ? 's' : ''} ago`;
             } catch {
                   return '';
@@ -158,7 +158,7 @@ const DashboardActivityFeed = ({ department, limit = 15, autoRefresh = true }) =
       };
 
       const getComplaintLink = (complaint) => {
-            if (!complaint) return '#';
+            if (!complaint) {return '#';}
             return `/complaint/${complaint._id}`;
       };
 

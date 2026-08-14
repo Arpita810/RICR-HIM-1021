@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Menu, Bell, X, Mic } from 'lucide-react';
@@ -48,8 +48,8 @@ export default function CitizenDashboard() {
 
       const handleNavigate = (id, extra) => {
             setView(id);
-            if (extra) setTrackId(extra);
-            if (id === 'notifications') loadUnread();
+            if (extra) {setTrackId(extra);}
+            if (id === 'notifications') {loadUnread();}
       };
 
       const handleLogout = async () => {

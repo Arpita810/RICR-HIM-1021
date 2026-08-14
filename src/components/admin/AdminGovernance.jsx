@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
       Sparkles, ShieldCheck, Star, Users, Building, BarChart3,
@@ -37,7 +37,7 @@ export default function AdminGovernance() {
             );
       }
 
-      if (!analytics) return null;
+      if (!analytics) {return null;}
 
       const {
             totalReportsGenerated,

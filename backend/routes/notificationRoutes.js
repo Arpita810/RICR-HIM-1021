@@ -11,7 +11,7 @@ router.get('/', async (req, res, next) => {
       try {
             const { page = 1, limit = 20, unreadOnly } = req.query;
             const query = { recipient: req.user._id };
-            if (unreadOnly === 'true') query.isRead = false;
+            if (unreadOnly === 'true') {query.isRead = false;}
 
             const skip = (parseInt(page) - 1) * parseInt(limit);
             const total = await Notification.countDocuments(query);
@@ -31,7 +31,7 @@ router.get('/', async (req, res, next) => {
 router.put('/:id/read', async (req, res, next) => {
       try {
             const n = await markAsRead(req.params.id, req.user._id);
-            if (!n) return res.status(404).json({ success: false, message: 'Notification not found' });
+            if (!n) {return res.status(404).json({ success: false, message: 'Notification not found' });}
             res.status(200).json({ success: true, notification: n });
       } catch (error) { next(error); }
 });

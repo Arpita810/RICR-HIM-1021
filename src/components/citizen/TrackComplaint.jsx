@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -18,7 +18,7 @@ export default function TrackComplaint({ initialId = '' }) {
       const [loading, setLoading] = useState(false);
 
       const refreshComplaint = useCallback(async (id) => {
-            if (!id) return;
+            if (!id) { return; }
             try {
                   const full = await getComplaint(id);
                   setComplaint(full.data.complaint);
@@ -36,7 +36,7 @@ export default function TrackComplaint({ initialId = '' }) {
 
       const search = async (e) => {
             e?.preventDefault();
-            if (!query.trim()) return toast.error(t('trackComplaint.enterComplaintId'));
+            if (!query.trim()) { return toast.error(t('trackComplaint.enterComplaintId')); }
             setLoading(true);
             setComplaint(null);
             try {
@@ -54,8 +54,8 @@ export default function TrackComplaint({ initialId = '' }) {
             }
       };
 
-      React.useEffect(() => {
-            if (initialId) search();
+      useEffect(() => {
+            if (initialId) { search(); }
       }, [initialId]);
 
       return (

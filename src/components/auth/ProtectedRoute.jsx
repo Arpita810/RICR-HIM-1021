@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -16,7 +15,7 @@ import { getAdminDashboardPath, isValidAdminDepartment } from '../../utils/depar
 import PageLoader from '../ui/PageLoader';
 
 const loginPathForRole = (role) => {
-      if (role === 'admin') return '/admin/login';
+      if (role === 'admin') {return '/admin/login';}
       return '/login';
 };
 
@@ -69,7 +68,7 @@ export const RoleRoute = ({ children, roles }) => {
             return <Navigate to="/login" state={{ from: location }} replace />;
       }
       if (!roleOk) {
-            if (u?.role === 'admin') return <Navigate to={getDashboardPath('admin')} replace />;
+            if (u?.role === 'admin') {return <Navigate to={getDashboardPath('admin')} replace />;}
             return <Navigate to="/unauthorized" replace />;
       }
       return children;
@@ -81,7 +80,7 @@ export const PublicRoute = ({ children }) => {
       // Only check admin/citizen sessions — never redirect based on officer session
       const sessionOk = hasValidSession() || isAuthFresh();
 
-      if (initializing && readStoredToken() && !isAuthFresh()) return children;
+      if (initializing && readStoredToken() && !isAuthFresh()) {return children;}
       // Only redirect if admin or citizen is logged in — officers have their own login page
       if (sessionOk && u?.role && u.role !== 'officer') {
             return <Navigate to={getDashboardPath(u.role)} replace />;

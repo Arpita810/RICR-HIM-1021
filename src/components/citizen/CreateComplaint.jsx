@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Upload, Sparkles, Siren, Loader2, LocateFixed, Shield } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -25,10 +25,10 @@ export default function CreateComplaint({ onSuccess, emergency = false }) {
       const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
       const runAI = useCallback(() => {
-            if (!form.title && !form.description) return;
+            if (!form.title && !form.description) {return;}
             const result = analyzeComplaintLocal(form.title, form.description);
             setAi(result);
-            if (!form.category) set('category', result.suggestedCategory);
+            if (!form.category) {set('category', result.suggestedCategory);}
       }, [form.title, form.description, form.category]);
 
       const onMapLocation = useCallback(({ lat, lng, address, city, state, pincode }) => {
@@ -44,7 +44,7 @@ export default function CreateComplaint({ onSuccess, emergency = false }) {
       }, []);
 
       const fetchLocation = () => {
-            if (!navigator.geolocation) return toast.error(t('toast.geolocationNotSupported'));
+            if (!navigator.geolocation) {return toast.error(t('toast.geolocationNotSupported'));}
             setLocLoading(true);
             navigator.geolocation.getCurrentPosition(
                   async ({ coords }) => {

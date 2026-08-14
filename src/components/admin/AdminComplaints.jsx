@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -35,7 +35,7 @@ export default function AdminComplaints() {
       useEffect(() => { load(); }, [status]);
 
       const handleAssign = async (complaintId, officerId) => {
-            if (!officerId) return;
+            if (!officerId) {return;}
             setAssigning(complaintId);
             try {
                   await assignOfficer(complaintId, officerId);

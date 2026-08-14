@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
       Download, Eye, Star, Calendar, Loader2, Building,
@@ -99,7 +99,7 @@ export default function ResolutionReports() {
       };
 
       const formatDate = (iso) => {
-            if (!iso) return '—';
+            if (!iso) {return '—';}
             return new Date(iso).toLocaleDateString('en-IN', {
                   day: '2-digit',
                   month: 'short',

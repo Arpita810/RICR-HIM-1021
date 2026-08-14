@@ -106,7 +106,7 @@ function ComplaintDetailModal({ complaint, onClose }) {
       const apiBase = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
 
       // Log view activity when modal opens
-      React.useEffect(() => {
+      useEffect(() => {
             if (complaint) {
                   // Import and call logComplaintViewed
                   import('../../api/activities').then(module => {
@@ -115,7 +115,7 @@ function ComplaintDetailModal({ complaint, onClose }) {
             }
       }, [complaint]);
 
-      if (!complaint) return null;
+      if (!complaint) { return null; }
 
       return (
             <motion.div
@@ -365,7 +365,7 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
       const [searchQ, setSearchQ] = useState('');
 
       const load = useCallback(async () => {
-            if (!officerId) return;
+            if (!officerId) { return; }
             setLoading(true);
             try {
                   const res = await getOfficerDetail(officerId);

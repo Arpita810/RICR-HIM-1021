@@ -146,19 +146,19 @@ export const authorizeRole = authorize;
 
 // ── Optional auth: attach user if token present, don't fail if not ────────────
 export const optionalAuth = async (req, res, next) => {
-      let token = req.cookies?.token
+      const token = req.cookies?.token
             || (req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.split(' ')[1] : null);
 
-      if (!token) return next();
+      if (!token) {return next();}
 
       try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             if (decoded.role === 'officer') {
                   req.user = await Officer.findById(decoded.id).select('-password');
-                  if (req.user) req.user = { ...req.user.toObject(), role: 'officer', id: req.user._id };
+                  if (req.user) {req.user = { ...req.user.toObject(), role: 'officer', id: req.user._id };}
             } else {
                   req.user = await User.findById(decoded.id).select('-password');
-                  if (req.user) req.user = { ...req.user.toObject(), id: req.user._id };
+                  if (req.user) {req.user = { ...req.user.toObject(), id: req.user._id };}
             }
       } catch {
             // ignore

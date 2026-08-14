@@ -198,7 +198,7 @@ export const finalizeResolutionAndSendReport = asyncHandler(async (req, res) => 
 
                   await sendEmail({
                         to: citizenEmail,
-                        subject: `Complaint Resolution Report - e-Samadhan AI`,
+                        subject: 'Complaint Resolution Report - e-Samadhan AI',
                         html: emailHtml,
                         text: `Dear Citizen, Your complaint (ID: ${complaint.complaintId || complaint._id}) has been successfully resolved. Please find your AI-generated complaint resolution report attached. Thank you for using e-Samadhan AI.`,
                         attachments: [
@@ -508,10 +508,10 @@ Return ONLY the raw JSON string array. No markdown, no wrappers.`;
                   console.log('🤖 [reportController] Querying Gemini for Governance Insights...');
                   const result = await model.generateContent(insightsPrompt);
                   const cleanedResponse = result.response.text().trim()
-                        .replace(/```json\n?/g, "")
-                        .replace(/```\n?/g, "")
-                        .replace(/^[\s\n]*/, "")
-                        .replace(/[\s\n]*$/, "")
+                        .replace(/```json\n?/g, '')
+                        .replace(/```\n?/g, '')
+                        .replace(/^[\s\n]*/, '')
+                        .replace(/[\s\n]*$/, '')
                         .trim();
 
                   const parsed = JSON.parse(cleanedResponse);

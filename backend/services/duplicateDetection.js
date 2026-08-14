@@ -46,7 +46,7 @@ export async function checkDuplicateCluster({ category, coordinates }) {
 
       const nearby = candidates.filter((c) => {
             const coords = c.location?.coordinates;
-            if (!coords?.lat || !coords?.lng) return false;
+            if (!coords?.lat || !coords?.lng) {return false;}
             return (
                   distanceKm(coordinates.lat, coordinates.lng, coords.lat, coords.lng) <=
                   DUPLICATE_RADIUS_KM

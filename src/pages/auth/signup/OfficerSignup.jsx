@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Webcam from 'react-webcam';
@@ -45,7 +45,7 @@ export default function OfficerSignup() {
 
       const set = (k, v) => {
             setForm(p => ({ ...p, [k]: v }));
-            if (errors[k]) setErrors(p => ({ ...p, [k]: '' }));
+            if (errors[k]) {setErrors(p => ({ ...p, [k]: '' }));}
       };
 
       const capture = useCallback(() => {
@@ -55,18 +55,18 @@ export default function OfficerSignup() {
 
       const validate = () => {
             const e = {};
-            if (!form.name.trim()) e.name = t('validation.fullNameRequired');
-            if (!form.email) e.email = 'Official email is required';
-            else if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = 'Invalid email';
-            if (!form.phone) e.phone = 'Mobile number is required';
-            else if (!/^[6-9]\d{9}$/.test(form.phone)) e.phone = 'Enter valid 10-digit number';
-            if (!form.employeeId.trim()) e.employeeId = 'Employee ID is required';
-            if (!form.department) e.department = 'Department is required';
-            if (!form.password) e.password = 'Password is required';
-            else if (form.password.length < 8) e.password = 'Min 8 characters';
-            else if (!/(?=.*[A-Z])(?=.*[a-z])(?=.*\d)/.test(form.password)) e.password = 'Must include uppercase, lowercase & number';
-            if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
-            if (!otpHook.otpVerified) e.otp = 'Please verify your email with OTP';
+            if (!form.name.trim()) {e.name = t('validation.fullNameRequired');}
+            if (!form.email) {e.email = 'Official email is required';}
+            else if (!/^\S+@\S+\.\S+$/.test(form.email)) {e.email = 'Invalid email';}
+            if (!form.phone) {e.phone = 'Mobile number is required';}
+            else if (!/^[6-9]\d{9}$/.test(form.phone)) {e.phone = 'Enter valid 10-digit number';}
+            if (!form.employeeId.trim()) {e.employeeId = 'Employee ID is required';}
+            if (!form.department) {e.department = 'Department is required';}
+            if (!form.password) {e.password = 'Password is required';}
+            else if (form.password.length < 8) {e.password = 'Min 8 characters';}
+            else if (!/(?=.*[A-Z])(?=.*[a-z])(?=.*\d)/.test(form.password)) {e.password = 'Must include uppercase, lowercase & number';}
+            if (form.password !== form.confirmPassword) {e.confirmPassword = 'Passwords do not match';}
+            if (!otpHook.otpVerified) {e.otp = 'Please verify your email with OTP';}
             setErrors(e);
             return Object.keys(e).length === 0;
       };
@@ -80,7 +80,7 @@ export default function OfficerSignup() {
                   const fd = new FormData();
                   Object.entries(form).forEach(([k, v]) => fd.append(k, v));
                   fd.append('otpVerified', 'true');
-                  if (govtIdFile) fd.append('govtIdImage', govtIdFile);
+                  if (govtIdFile) {fd.append('govtIdImage', govtIdFile);}
                   if (liveImage) {
                         const blob = await fetch(liveImage).then(r => r.blob());
                         fd.append('liveImage', blob, 'selfie.jpg');
@@ -202,7 +202,7 @@ export default function OfficerSignup() {
                                           <div className="absolute top-2 right-2 flex items-center gap-1 bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                                                 <CheckCircle2 className="w-3 h-3" /> Captured
                                           </div>
-                                          <button type="button" onClick={() => { setLiveImage(null); setShowCam(true) }}
+                                          <button type="button" onClick={() => { setLiveImage(null); setShowCam(true); }}
                                                 className="mt-2 w-full py-2 text-xs text-amber-600 font-semibold hover:underline">
                                                 Retake
                                           </button>

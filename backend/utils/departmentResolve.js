@@ -17,20 +17,20 @@ const LABEL_TO_SLUG = {
  * Returns canonical slug or null.
  */
 export function resolveDepartmentSlug(input) {
-      if (input == null || String(input).trim() === '') return null;
+      if (input == null || String(input).trim() === '') {return null;}
 
       const raw = String(input).trim();
       const lower = raw.toLowerCase();
 
-      if (DEPT_SLUGS.includes(lower)) return lower;
+      if (DEPT_SLUGS.includes(lower)) {return lower;}
 
-      if (LABEL_TO_SLUG[lower]) return LABEL_TO_SLUG[lower];
+      if (LABEL_TO_SLUG[lower]) {return LABEL_TO_SLUG[lower];}
 
       const slugified = lower.replace(/\s+/g, '_').replace(/&/g, 'and');
-      if (DEPT_SLUGS.includes(slugified)) return slugified;
+      if (DEPT_SLUGS.includes(slugified)) {return slugified;}
 
       const partial = DEPT_SLUGS.find((s) => lower.includes(s.replace(/_/g, ' ')) || s === slugified);
-      if (partial) return partial;
+      if (partial) {return partial;}
 
       return null;
 }

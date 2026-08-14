@@ -36,7 +36,7 @@ export const loadModels = async (onProgress) => {
             onProgress?.('Models ready');
             return;
       }
-      if (loadPromise) return loadPromise;
+      if (loadPromise) {return loadPromise;}
 
       loadPromise = (async () => {
             const baseUrl = getModelsBaseUrl();
@@ -77,12 +77,12 @@ export const loadModels = async (onProgress) => {
 
             modelsLoaded = true;
             onProgress?.('Models ready');
-            if (import.meta.env.DEV) console.info('[face-api] All models loaded');
+            if (import.meta.env.DEV) {console.info('[face-api] All models loaded');}
       })().catch((err) => {
             loadPromise = null;
             modelsLoaded = false;
             console.error('[face-api] Model load failed:', err);
-            if (err.code === 'MODELS_MISSING') throw err;
+            if (err.code === 'MODELS_MISSING') {throw err;}
             throw new Error(
                   'Failed to load face recognition models. Run: node scripts/downloadModels.js'
             );
@@ -114,8 +114,8 @@ async function detectSingleFaceDescriptor(imageElement) {
             .withFaceLandmarks()
             .withFaceDescriptors();
 
-      if (!detections?.length) return { error: 'NO_FACE' };
-      if (detections.length > 1) return { error: 'MULTIPLE_FACES', count: detections.length };
+      if (!detections?.length) {return { error: 'NO_FACE' };}
+      if (detections.length > 1) {return { error: 'MULTIPLE_FACES', count: detections.length };}
 
       const det = detections[0];
       const score = det.detection?.score ?? 0;
@@ -128,7 +128,7 @@ async function detectSingleFaceDescriptor(imageElement) {
 
 export const getFaceDescriptor = async (imageElement) => {
       const result = await detectSingleFaceDescriptor(imageElement);
-      if (result.error) return null;
+      if (result.error) {return null;}
       return result.detection;
 };
 
@@ -206,7 +206,7 @@ export const verifyFaces = async ({ documentFile, selfieBase64, onStep }) => {
 
 /** Live preview: detect face in video frame (no descriptor — faster) */
 export const detectFaceInVideo = async (videoEl) => {
-      if (!modelsLoaded) return null;
+      if (!modelsLoaded) {return null;}
       const detections = await faceapi.detectAllFaces(videoEl, detectorOptions());
       return detections;
 };

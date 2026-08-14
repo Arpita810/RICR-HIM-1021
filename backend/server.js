@@ -82,7 +82,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // ── Ensure upload dirs exist (also handled by initializeDatabase) ─────────────
 ['uploads/profiles', 'uploads/complaints', 'uploads/govt-ids', 'uploads/liveness', 'uploads/ids', 'uploads/reports'].forEach(dir => {
       const full = path.join(__dirname, dir);
-      if (!fs.existsSync(full)) fs.mkdirSync(full, { recursive: true });
+      if (!fs.existsSync(full)) {fs.mkdirSync(full, { recursive: true });}
 });
 
 // ── Security ──────────────────────────────────────────────────────────────────
@@ -122,7 +122,7 @@ app.use('/api/auth/forgot-password', authLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
-if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') {app.use(morgan('dev'));}
 
 // ── Static files ──────────────────────────────────────────────────────────────
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -193,8 +193,8 @@ httpServer.listen(PORT, () => {
       console.log('\n┌─────────────────────────────────────────────────────┐');
       console.log('│  🚀 e-Samadhan AI Server v2.0                        │');
       console.log(`│  📡 http://localhost:${PORT}/api                        │`);
-      console.log(`│  🗄️  MongoDB: connected                              │`);
-      console.log(`│  🔌 Socket.io real-time enabled                      │`);
+      console.log('│  🗄️  MongoDB: connected                              │');
+      console.log('│  🔌 Socket.io real-time enabled                      │');
       console.log(`│  ❤️  http://localhost:${PORT}/api/health                 │`);
       console.log(`│  🌍 Mode: ${(process.env.NODE_ENV || 'development').padEnd(42)}│`);
       if (isDev) {

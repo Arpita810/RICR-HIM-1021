@@ -57,7 +57,7 @@ export const uploadDocument = async (req, res, next) => {
                   if (!verificationResult.valid) {
                         // Delete the uploaded file since it's wrong
                         const fullPath = path.join(__dirname, '..', fileUrl);
-                        if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+                        if (fs.existsSync(fullPath)) {fs.unlinkSync(fullPath);}
 
                         return res.status(422).json({
                               success: false,

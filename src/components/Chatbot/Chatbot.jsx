@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
       MessageCircle, X, Send, Mic, MicOff, Bot, User,
@@ -115,7 +115,7 @@ const Chatbot = () => {
 
       // Handle sending message
       const handleSendMessage = async () => {
-            if (!inputMessage.trim() || isLoading) return;
+            if (!inputMessage.trim() || isLoading) {return;}
 
             const userMessage = {
                   id: Date.now(),

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -28,7 +28,7 @@ import StatusBadge from '../../components/citizen/StatusBadge';
 import DashboardActivityFeed from '../../components/DashboardActivityFeed';
 import { deptLabel } from '../../utils/complaintConstants';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
-import { generateReportText, finalizeResolutionAndSend } from '../../api/reports';
+import { generateReportText, finalizeResolutionAndSend, getOfficerReportAnalytics } from '../../api/reports';
 
 const PRIORITY_COLORS = {
   emergency: 'bg-red-100 text-red-700 border border-red-200',
@@ -49,7 +49,7 @@ function PriorityBadge({ priority }) {
 }
 
 function formatDate(iso) {
-  if (!iso) return '—';
+  if (!iso) { return '—'; }
   return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
@@ -87,17 +87,17 @@ function ComplaintCard({ complaint, onOpen, actionSlot }) {
 }
 
 function DetailModal({ complaint, source, note, setNote, actionLoading, acceptingId, onClose, onAccept, onStatusUpdate, onAddNote, t, onSuccess }) {
-  if (!complaint) return null;
-  const isQueue = source === 'queue';
-  const apiBase = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
-
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiReport, setAiReport] = useState('');
   const [isFinalizing, setIsFinalizing] = useState(false);
 
+  if (!complaint) { return null; }
+  const isQueue = source === 'queue';
+  const apiBase = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
+
   const handleGenerateReport = async () => {
     if (!note.trim()) {
-      toast.error("Please enter resolution notes first");
+      toast.error('Please enter resolution notes first');
       return;
     }
     setIsGenerating(true);
@@ -105,31 +105,31 @@ function DetailModal({ complaint, source, note, setNote, actionLoading, acceptin
       const res = await generateReportText(complaint._id, note);
       if (res.data?.success) {
         setAiReport(res.data.resolutionReport);
-        toast.success("AI Resolution Report generated successfully!");
+        toast.success('AI Resolution Report generated successfully!');
       } else {
-        toast.error("Failed to generate AI report");
+        toast.error('Failed to generate AI report');
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to generate report");
+      toast.error(err.response?.data?.message || 'Failed to generate report');
     } finally {
       setIsGenerating(false);
     }
   };
 
   const handleApproveAndResolve = async () => {
-    if (!note.trim() || !aiReport) return;
+    if (!note.trim() || !aiReport) { return; }
     setIsFinalizing(true);
     try {
       const res = await finalizeResolutionAndSend(complaint._id, note, aiReport);
       if (res.data?.success) {
-        toast.success("Grievance resolved successfully! PDF sent to citizen.");
+        toast.success('Grievance resolved successfully! PDF sent to citizen.');
         onClose();
-        if (onSuccess) onSuccess();
+        if (onSuccess) { onSuccess(); }
       } else {
-        toast.error("Failed to finalize resolution");
+        toast.error('Failed to finalize resolution');
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to resolve complaint");
+      toast.error(err.response?.data?.message || 'Failed to resolve complaint');
     } finally {
       setIsFinalizing(false);
     }

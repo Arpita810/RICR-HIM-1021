@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ── Ensure upload directories exist ──────────────────────────────────────────
-const ensureDir = (dir) => { if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true }); };
+const ensureDir = (dir) => { if (!fs.existsSync(dir)) {fs.mkdirSync(dir, { recursive: true });} };
 
 const UPLOAD_BASE = path.join(__dirname, '..', 'uploads');
 ensureDir(path.join(UPLOAD_BASE, 'profiles'));
@@ -67,7 +67,7 @@ export const registrationUpload = multer({
 export const deleteFile = (filePath) => {
       try {
             const full = path.join(__dirname, '..', filePath);
-            if (fs.existsSync(full)) fs.unlinkSync(full);
+            if (fs.existsSync(full)) {fs.unlinkSync(full);}
       } catch (err) {
             console.error('File delete error:', err.message);
       }

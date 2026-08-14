@@ -29,19 +29,19 @@ export const registerOfficer = async (req, res, next) => {
 
     // ── Input validation ──────────────────────────────────────────────────────
     if (!employeeId?.trim())
-      return res.status(400).json({ success: false, message: 'Employee ID is required', code: 'MISSING_EMPLOYEE_ID' });
+      {return res.status(400).json({ success: false, message: 'Employee ID is required', code: 'MISSING_EMPLOYEE_ID' });}
     if (!email?.trim() || !/^\S+@\S+\.\S+$/.test(email))
-      return res.status(400).json({ success: false, message: 'Valid email is required', code: 'INVALID_EMAIL' });
+      {return res.status(400).json({ success: false, message: 'Valid email is required', code: 'INVALID_EMAIL' });}
     if (!department?.trim())
-      return res.status(400).json({ success: false, message: 'Department is required', code: 'MISSING_DEPARTMENT' });
+      {return res.status(400).json({ success: false, message: 'Department is required', code: 'MISSING_DEPARTMENT' });}
     if (!password || password.length < 8)
-      return res.status(400).json({ success: false, message: 'Password must be at least 8 characters', code: 'WEAK_PASSWORD' });
+      {return res.status(400).json({ success: false, message: 'Password must be at least 8 characters', code: 'WEAK_PASSWORD' });}
     if (password !== confirmPassword)
-      return res.status(400).json({ success: false, message: 'Passwords do not match', code: 'PASSWORD_MISMATCH' });
+      {return res.status(400).json({ success: false, message: 'Passwords do not match', code: 'PASSWORD_MISMATCH' });}
 
     const deptSlug = resolveDepartmentSlug(department);
     if (!deptSlug)
-      return res.status(400).json({ success: false, message: 'Invalid department selected', code: 'INVALID_DEPARTMENT' });
+      {return res.status(400).json({ success: false, message: 'Invalid department selected', code: 'INVALID_DEPARTMENT' });}
 
     const normalEmail = email.toLowerCase().trim();
     const normalEmpId = employeeId.trim().toUpperCase();
@@ -206,17 +206,17 @@ export const loginOfficer = async (req, res, next) => {
     const { employeeId, email, password, department } = req.body;
 
     if (!employeeId?.trim())
-      return res.status(400).json({ success: false, message: 'Employee ID is required', code: 'MISSING_EMPLOYEE_ID' });
+      {return res.status(400).json({ success: false, message: 'Employee ID is required', code: 'MISSING_EMPLOYEE_ID' });}
     if (!email?.trim())
-      return res.status(400).json({ success: false, message: 'Email is required', code: 'MISSING_EMAIL' });
+      {return res.status(400).json({ success: false, message: 'Email is required', code: 'MISSING_EMAIL' });}
     if (!password)
-      return res.status(400).json({ success: false, message: 'Password is required', code: 'MISSING_PASSWORD' });
+      {return res.status(400).json({ success: false, message: 'Password is required', code: 'MISSING_PASSWORD' });}
     if (!department?.trim())
-      return res.status(400).json({ success: false, message: 'Department is required', code: 'MISSING_DEPARTMENT' });
+      {return res.status(400).json({ success: false, message: 'Department is required', code: 'MISSING_DEPARTMENT' });}
 
     const deptSlug = resolveDepartmentSlug(department);
     if (!deptSlug)
-      return res.status(400).json({ success: false, message: 'Invalid department selected', code: 'INVALID_DEPARTMENT' });
+      {return res.status(400).json({ success: false, message: 'Invalid department selected', code: 'INVALID_DEPARTMENT' });}
 
     const normalEmail = email.toLowerCase().trim();
     const normalEmpId = employeeId.trim().toUpperCase();
@@ -227,47 +227,47 @@ export const loginOfficer = async (req, res, next) => {
     // Use generic message for security — don't reveal which field is wrong
     const INVALID_CREDS = { success: false, message: 'Invalid credentials. Check your Employee ID, email, department and password.', code: 'INVALID_CREDENTIALS' };
 
-    if (!officer) return res.status(401).json(INVALID_CREDS);
+    if (!officer) {return res.status(401).json(INVALID_CREDS);}
 
     // Department check
     if (officer.department !== deptSlug)
-      return res.status(401).json({ success: false, message: 'Invalid department selected for this Employee ID.', code: 'DEPARTMENT_MISMATCH' });
+      {return res.status(401).json({ success: false, message: 'Invalid department selected for this Employee ID.', code: 'DEPARTMENT_MISMATCH' });}
 
     // Email check
     if (officer.email.toLowerCase() !== normalEmail)
-      return res.status(401).json(INVALID_CREDS);
+      {return res.status(401).json(INVALID_CREDS);}
 
     // Must have registered (set password)
     if (!officer.password)
-      return res.status(401).json({
+      {return res.status(401).json({
         success: false,
         message: 'Account not yet registered. Please complete registration first.',
         code: 'NOT_REGISTERED',
-      });
+      });}
 
     // Block checks
     if (officer.isBlocked)
-      return res.status(403).json({
+      {return res.status(403).json({
         success: false,
         message: 'Your officer account has been blocked by the department admin.',
         code: 'ACCOUNT_BLOCKED',
-      });
+      });}
     if (officer.banned)
-      return res.status(403).json({
+      {return res.status(403).json({
         success: false,
         message: 'Your account has been suspended. Contact your department admin.',
         code: 'ACCOUNT_SUSPENDED',
-      });
+      });}
     if (!officer.isActive)
-      return res.status(403).json({
+      {return res.status(403).json({
         success: false,
         message: 'Your account is inactive. Contact your department admin.',
         code: 'ACCOUNT_INACTIVE',
-      });
+      });}
 
     // Password check
     const isMatch = await officer.matchPassword(password);
-    if (!isMatch) return res.status(401).json(INVALID_CREDS);
+    if (!isMatch) {return res.status(401).json(INVALID_CREDS);}
 
     // ── Generate JWT ──────────────────────────────────────────────────────────
     const token = officer.getSignedJwtToken();
@@ -364,7 +364,7 @@ export const getOfficerDashboard = async (req, res, next) => {
   try {
     const officerId = req.officer.id;
     const officer = await Officer.findById(officerId);
-    if (!officer) return res.status(404).json({ success: false, message: 'Officer not found' });
+    if (!officer) {return res.status(404).json({ success: false, message: 'Officer not found' });}
 
     await officer.recalcStats();
 
@@ -393,7 +393,7 @@ export const getAssignedComplaints = async (req, res, next) => {
   try {
     const { status, page = 1, limit = 20 } = req.query;
     const filter = { assignedOfficer: req.officer.id };
-    if (status) filter.status = status;
+    if (status) {filter.status = status;}
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const total = await Complaint.countDocuments(filter);
@@ -420,13 +420,13 @@ export const updateComplaintStatus = async (req, res, next) => {
     }
 
     const complaint = await Complaint.findById(req.params.id);
-    if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+    if (!complaint) {return res.status(404).json({ success: false, message: 'Complaint not found' });}
     if (complaint.assignedOfficer?.toString() !== req.officer.id) {
       return res.status(403).json({ success: false, message: 'Not authorized to update this complaint' });
     }
 
     complaint.status = status;
-    if (status === 'resolved') complaint.resolvedAt = new Date();
+    if (status === 'resolved') {complaint.resolvedAt = new Date();}
     complaint.timeline.push({
       status,
       note: note || `Status updated to ${status} by officer`,
@@ -471,7 +471,7 @@ export const updateComplaintStatus = async (req, res, next) => {
 export const acceptComplaint = async (req, res, next) => {
   try {
     const complaint = await Complaint.findById(req.params.id);
-    if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+    if (!complaint) {return res.status(404).json({ success: false, message: 'Complaint not found' });}
     if (complaint.assignedOfficer?.toString() !== req.officer.id) {
       return res.status(403).json({ success: false, message: 'Not authorized to update this complaint' });
     }
@@ -524,10 +524,10 @@ export const acceptComplaint = async (req, res, next) => {
 export const addOfficerNote = async (req, res, next) => {
   try {
     const { note } = req.body;
-    if (!note?.trim()) return res.status(400).json({ success: false, message: 'Note is required' });
+    if (!note?.trim()) {return res.status(400).json({ success: false, message: 'Note is required' });}
 
     const complaint = await Complaint.findById(req.params.id);
-    if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+    if (!complaint) {return res.status(404).json({ success: false, message: 'Complaint not found' });}
     if (complaint.assignedOfficer?.toString() !== req.officer.id) {
       return res.status(403).json({ success: false, message: 'Not authorized to update this complaint' });
     }
@@ -571,7 +571,7 @@ export const getOfficerPerformance = async (req, res, next) => {
   try {
     const officerId = req.officer.id;
     const officer = await Officer.findById(officerId);
-    if (!officer) return res.status(404).json({ success: false, message: 'Officer not found' });
+    if (!officer) {return res.status(404).json({ success: false, message: 'Officer not found' });}
 
     await officer.recalcStats();
 
@@ -645,7 +645,7 @@ export const getOfficerPerformance = async (req, res, next) => {
 export const getOfficerProfile = async (req, res, next) => {
   try {
     const officer = await Officer.findById(req.officer.id).select('-password');
-    if (!officer) return res.status(404).json({ success: false, message: 'Officer not found' });
+    if (!officer) {return res.status(404).json({ success: false, message: 'Officer not found' });}
     await officer.recalcStats();
     res.status(200).json({ success: true, data: buildOfficerResponse(officer) });
   } catch (err) { next(err); }
@@ -835,7 +835,7 @@ export const getDepartmentQueue = async (req, res, next) => {
         isAccepted: false,
         status: 'pending',
       };
-      if (priority) filter.priority = priority;
+      if (priority) {filter.priority = priority;}
       const skip = (parseInt(page) - 1) * parseInt(limit);
       const [total, complaints] = await Promise.all([
         Complaint.countDocuments(filter),
@@ -853,7 +853,7 @@ export const getDepartmentQueue = async (req, res, next) => {
       isAccepted: false,
       status: 'pending',
     };
-    if (priority) filter.priority = priority;
+    if (priority) {filter.priority = priority;}
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const [total, complaints] = await Promise.all([
@@ -946,7 +946,7 @@ export const selfAssignComplaint = async (req, res, next) => {
 
     // Notify citizen via socket
     emitComplaintUpdate(complaint.citizen?._id, complaint, {
-      message: `Your complaint has been accepted by an officer`,
+      message: 'Your complaint has been accepted by an officer',
     });
 
     // Audit log

@@ -2,7 +2,7 @@
  * Fix common Atlas URI mistakes (e.g. unencoded @ in password).
  */
 export function normalizeMongoUri(raw) {
-      if (!raw?.trim()) return '';
+      if (!raw?.trim()) {return '';}
 
       let uri = raw.trim();
 
@@ -34,6 +34,6 @@ export function normalizeMongoUri(raw) {
 }
 
 export function maskMongoUri(uri) {
-      if (!uri) return '(empty)';
+      if (!uri) {return '(empty)';}
       return uri.replace(/:([^@/]+)@/, ':****@');
 }

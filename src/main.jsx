@@ -1,16 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import './i18n/index.js'
-import ErrorBoundary from './components/errors/ErrorBoundary.jsx'
-import ErrorPage from './components/errors/ErrorPage.jsx'
-import { validateFrontendEnv } from './utils/env.js'
-import { initMonitoring } from './utils/monitoring.js'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+import './i18n/index.js';
+import ErrorBoundary from './components/errors/ErrorBoundary.jsx';
+import ErrorPage from './components/errors/ErrorPage.jsx';
+import { validateFrontendEnv } from './utils/env.js';
+import { initMonitoring } from './utils/monitoring.js';
 
-initMonitoring()
+initMonitoring();
 
-const envCheck = validateFrontendEnv()
+const envCheck = validateFrontendEnv();
 
 function Root() {
       if (!envCheck.valid) {
@@ -23,18 +23,18 @@ function Root() {
                         showDetails={import.meta.env.DEV}
                         homeHref="/"
                   />
-            )
+            );
       }
 
       return (
             <ErrorBoundary>
                   <App />
             </ErrorBoundary>
-      )
+      );
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
       <React.StrictMode>
             <Root />
       </React.StrictMode>,
-)
+);

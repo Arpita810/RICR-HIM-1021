@@ -56,11 +56,11 @@ export default function OfficerRegisterPage() {
       const handleVerifyIdentity = async (e) => {
             e.preventDefault();
             const errs = {};
-            if (!empId.trim()) errs.empId = t('validation.employeeIdRequired');
-            if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email)) errs.email = t('validation.enterValidEmail');
-            if (!department) errs.department = t('validation.departmentRequired');
+            if (!empId.trim()) { errs.empId = t('validation.employeeIdRequired'); }
+            if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email)) { errs.email = t('validation.enterValidEmail'); }
+            if (!department) { errs.department = t('validation.departmentRequired'); }
             setErrors(errs);
-            if (Object.keys(errs).length) return;
+            if (Object.keys(errs).length) { return; }
 
             setVerifying(true);
             try {
@@ -72,12 +72,12 @@ export default function OfficerRegisterPage() {
             } catch (err) {
                   const code = err.response?.data?.code;
                   const msg = err.response?.data?.message || 'Verification failed';
-                  if (code === 'NOT_FOUND') setErrors({ empId: 'Employee ID not found. Contact your admin.' });
-                  else if (code === 'EMAIL_MISMATCH') setErrors({ email: 'Email does not match this Employee ID.' });
-                  else if (code === 'DEPARTMENT_MISMATCH') setErrors({ department: 'This Employee ID belongs to a different department.' });
+                  if (code === 'NOT_FOUND') { setErrors({ empId: 'Employee ID not found. Contact your admin.' }); }
+                  else if (code === 'EMAIL_MISMATCH') { setErrors({ email: 'Email does not match this Employee ID.' }); }
+                  else if (code === 'DEPARTMENT_MISMATCH') { setErrors({ department: 'This Employee ID belongs to a different department.' }); }
                   else if (code === 'ALREADY_REGISTERED') { toast.error('Already registered. Please login.'); navigate('/login'); }
-                  else if (code === 'ACCOUNT_BLOCKED') toast.error('Your account has been blocked by the department admin.');
-                  else toast.error(msg);
+                  else if (code === 'ACCOUNT_BLOCKED') { toast.error('Your account has been blocked by the department admin.'); }
+                  else { toast.error(msg); }
             } finally {
                   setVerifying(false);
             }
@@ -97,15 +97,15 @@ export default function OfficerRegisterPage() {
       };
 
       const handleOtpChange = (index, value) => {
-            if (!/^\d?$/.test(value)) return;
+            if (!/^\d?$/.test(value)) { return; }
             const next = [...otp];
             next[index] = value;
             setOtp(next);
-            if (value && index < 5) otpRefs.current[index + 1]?.focus();
+            if (value && index < 5) { otpRefs.current[index + 1]?.focus(); }
       };
 
       const handleOtpKeyDown = (index, e) => {
-            if (e.key === 'Backspace' && !otp[index] && index > 0) otpRefs.current[index - 1]?.focus();
+            if (e.key === 'Backspace' && !otp[index] && index > 0) { otpRefs.current[index - 1]?.focus(); }
       };
 
       const handleOtpPaste = (e) => {
@@ -133,12 +133,12 @@ export default function OfficerRegisterPage() {
       const handleRegister = async (e) => {
             e.preventDefault();
             const errs = {};
-            if (!password || password.length < 8) errs.password = t('validation.passwordMinLength');
-            if (!/[A-Z]/.test(password)) errs.password = 'Must contain at least one uppercase letter';
-            if (!/\d/.test(password)) errs.password = 'Must contain at least one number';
-            if (password !== confirm) errs.confirm = t('validation.passwordMismatch');
+            if (!password || password.length < 8) { errs.password = t('validation.passwordMinLength'); }
+            if (!/[A-Z]/.test(password)) { errs.password = 'Must contain at least one uppercase letter'; }
+            if (!/\d/.test(password)) { errs.password = 'Must contain at least one number'; }
+            if (password !== confirm) { errs.confirm = t('validation.passwordMismatch'); }
             setErrors(errs);
-            if (Object.keys(errs).length) return;
+            if (Object.keys(errs).length) { return; }
 
             setRegistering(true);
             try {
@@ -173,10 +173,10 @@ export default function OfficerRegisterPage() {
 
       const pwStrength = (() => {
             let score = 0;
-            if (password.length >= 8) score++;
-            if (/[A-Z]/.test(password)) score++;
-            if (/\d/.test(password)) score++;
-            if (/[^A-Za-z0-9]/.test(password)) score++;
+            if (password.length >= 8) { score++; }
+            if (/[A-Z]/.test(password)) { score++; }
+            if (/\d/.test(password)) { score++; }
+            if (/[^A-Za-z0-9]/.test(password)) { score++; }
             return score;
       })();
 

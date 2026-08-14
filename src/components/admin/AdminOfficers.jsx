@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2, User, Eye, ShieldOff, ShieldCheck, Copy, CheckCircle2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -159,7 +159,7 @@ export default function AdminOfficers() {
       useEffect(() => { load(); }, []);
 
       const handleBlock = async (reason) => {
-            if (!blockTarget) return;
+            if (!blockTarget) {return;}
             setActionLoading(true);
             try {
                   await toggleBlockOfficer(blockTarget._id, reason);
@@ -174,7 +174,7 @@ export default function AdminOfficers() {
       };
 
       const handleUnblock = async () => {
-            if (!unblockTarget) return;
+            if (!unblockTarget) {return;}
             setActionLoading(true);
             try {
                   await toggleBlockOfficer(unblockTarget._id);
@@ -190,9 +190,9 @@ export default function AdminOfficers() {
 
       const handleToggleFromModal = async (id) => {
             const officer = officers.find((o) => o._id === id);
-            if (!officer) return;
-            if (officer.isBlocked) setUnblockTarget(officer);
-            else setBlockTarget(officer);
+            if (!officer) {return;}
+            if (officer.isBlocked) {setUnblockTarget(officer);}
+            else {setBlockTarget(officer);}
             setSelectedId(null);
       };
 

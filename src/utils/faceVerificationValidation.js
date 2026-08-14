@@ -257,18 +257,18 @@ export const validateSignupBeforeSubmit = (signupData) => {
       }
 
       // Check mandatory personal info
-      if (!signupData.name) blockingErrors.push('Name is required');
-      if (!signupData.email) blockingErrors.push('Email is required');
-      if (!signupData.phone) blockingErrors.push('Phone number is required');
-      if (!signupData.password) blockingErrors.push('Password is required');
+      if (!signupData.name) {blockingErrors.push('Name is required');}
+      if (!signupData.email) {blockingErrors.push('Email is required');}
+      if (!signupData.phone) {blockingErrors.push('Phone number is required');}
+      if (!signupData.password) {blockingErrors.push('Password is required');}
 
       // Check mandatory location info
-      if (!signupData.address) blockingErrors.push('Address is required');
-      if (!signupData.city) blockingErrors.push('City is required');
-      if (!signupData.state) blockingErrors.push('State is required');
+      if (!signupData.address) {blockingErrors.push('Address is required');}
+      if (!signupData.city) {blockingErrors.push('City is required');}
+      if (!signupData.state) {blockingErrors.push('State is required');}
 
       // Check mandatory government ID
-      if (!signupData.govtIdNumber) blockingErrors.push('Government ID number is required');
+      if (!signupData.govtIdNumber) {blockingErrors.push('Government ID number is required');}
 
       return {
             canSubmit: blockingErrors.length === 0,

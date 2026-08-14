@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2, BadgeCheck, Building2, ShieldOff } from 'lucide-react';
@@ -44,16 +44,16 @@ export default function LoginPage() {
       const validate = () => {
             const errs = {};
             if (role === 'citizen') {
-                  if (!form.email) errs.email = t('validation.emailRequired');
-                  else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = t('validation.enterValidEmail');
+                  if (!form.email) {errs.email = t('validation.emailRequired');}
+                  else if (!/^\S+@\S+\.\S+$/.test(form.email)) {errs.email = t('validation.enterValidEmail');}
             } else {
-                  if (!form.employeeId.trim()) errs.employeeId = t('validation.employeeIdRequired');
-                  if (!form.email) errs.email = t('validation.emailRequired');
-                  else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = t('validation.enterValidEmail');
-                  if (!form.department) errs.department = t('validation.departmentRequired');
+                  if (!form.employeeId.trim()) {errs.employeeId = t('validation.employeeIdRequired');}
+                  if (!form.email) {errs.email = t('validation.emailRequired');}
+                  else if (!/^\S+@\S+\.\S+$/.test(form.email)) {errs.email = t('validation.enterValidEmail');}
+                  if (!form.department) {errs.department = t('validation.departmentRequired');}
             }
-            if (!form.password) errs.password = t('validation.passwordRequired');
-            else if (form.password.length < 8) errs.password = t('validation.passwordMinLength');
+            if (!form.password) {errs.password = t('validation.passwordRequired');}
+            else if (form.password.length < 8) {errs.password = t('validation.passwordMinLength');}
             setErrors(errs);
             return Object.keys(errs).length === 0;
       };
@@ -61,13 +61,13 @@ export default function LoginPage() {
       const handleChange = (e) => {
             const { name, value, type, checked } = e.target;
             setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-            if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
-            if (blockedInfo) setBlockedInfo(null);
+            if (errors[name]) {setErrors((prev) => ({ ...prev, [name]: '' }));}
+            if (blockedInfo) {setBlockedInfo(null);}
       };
 
       const handleSubmit = async (e) => {
             e.preventDefault();
-            if (!validate()) return;
+            if (!validate()) {return;}
             setLoading(true);
             try {
                   let data;
@@ -81,17 +81,17 @@ export default function LoginPage() {
                               password: form.password,
                         });
                         data = response.data;
-                        if (!data?.token || !data?.user) throw new Error('Invalid login response from server');
+                        if (!data?.token || !data?.user) {throw new Error('Invalid login response from server');}
                         const saved = persistOfficerSession(data.token, data.officer || data.user, { debug: import.meta.env.DEV });
-                        if (!saved) throw new Error('Could not save officer session');
-                        if (!hasValidOfficerSession()) throw new Error('Officer session could not be verified. Please try again.');
+                        if (!saved) {throw new Error('Could not save officer session');}
+                        if (!hasValidOfficerSession()) {throw new Error('Officer session could not be verified. Please try again.');}
                         setErrors({});
                         toast.success(data.message || t('toast.welcomeBack'));
                         navigate('/officer/dashboard', { replace: true });
                         return;
                   }
                   const authUser = readStoredAuth() || data.user;
-                  if (!hasValidSession() || !authUser?.role) throw new Error('Session could not be saved. Please try again.');
+                  if (!hasValidSession() || !authUser?.role) {throw new Error('Session could not be saved. Please try again.');}
                   setErrors({});
                   toast.success(data.message || t('toast.welcomeBack'));
                   const dest = from || getDashboardPath(authUser.role);

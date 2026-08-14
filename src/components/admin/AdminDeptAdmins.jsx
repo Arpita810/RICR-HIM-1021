@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +32,7 @@ export default function AdminDeptAdmins() {
       };
 
       const remove = async (id) => {
-            if (!window.confirm(t('common.confirmDelete') || 'Deactivate this department admin?')) return;
+            if (!window.confirm(t('common.confirmDelete') || 'Deactivate this department admin?')) {return;}
             try {
                   await removeDepartmentAdmin(id);
                   toast.success(t('toast.success'));

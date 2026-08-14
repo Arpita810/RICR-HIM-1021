@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -77,7 +77,7 @@ export default function CitizenSignup() {
       // ── Helpers ────────────────────────────────────────────────────────────────
       const set = (k, v) => {
             setForm(p => ({ ...p, [k]: v }));
-            if (errors[k]) setErrors(p => ({ ...p, [k]: '' }));
+            if (errors[k]) {setErrors(p => ({ ...p, [k]: '' }));}
       };
 
       // ── Location ───────────────────────────────────────────────────────────────
@@ -149,30 +149,30 @@ export default function CitizenSignup() {
       const validateStep = (s) => {
             const e = {};
             if (s === 0) {
-                  if (!form.name.trim()) e.name = 'Full name is required';
-                  if (!form.email) e.email = 'Email is required';
-                  else if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = 'Invalid email';
-                  if (!form.phone) e.phone = 'Mobile number is required';
-                  else if (!/^[6-9]\d{9}$/.test(form.phone)) e.phone = 'Enter valid 10-digit number';
-                  if (!form.password) e.password = 'Password is required';
-                  else if (form.password.length < 8) e.password = 'Minimum 8 characters';
+                  if (!form.name.trim()) {e.name = 'Full name is required';}
+                  if (!form.email) {e.email = 'Email is required';}
+                  else if (!/^\S+@\S+\.\S+$/.test(form.email)) {e.email = 'Invalid email';}
+                  if (!form.phone) {e.phone = 'Mobile number is required';}
+                  else if (!/^[6-9]\d{9}$/.test(form.phone)) {e.phone = 'Enter valid 10-digit number';}
+                  if (!form.password) {e.password = 'Password is required';}
+                  else if (form.password.length < 8) {e.password = 'Minimum 8 characters';}
                   else if (!/(?=.*[A-Z])(?=.*[a-z])(?=.*\d)/.test(form.password))
-                        e.password = 'Must include uppercase, lowercase & number';
-                  if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
+                        {e.password = 'Must include uppercase, lowercase & number';}
+                  if (form.password !== form.confirmPassword) {e.confirmPassword = 'Passwords do not match';}
             }
             if (s === 1) {
-                  if (!form.completeAddress.trim()) e.completeAddress = 'Complete address is required';
-                  if (!form.city.trim()) e.city = 'City / Town is required';
-                  if (!form.state) e.state = 'State is required';
+                  if (!form.completeAddress.trim()) {e.completeAddress = 'Complete address is required';}
+                  if (!form.city.trim()) {e.city = 'City / Town is required';}
+                  if (!form.state) {e.state = 'State is required';}
             }
             if (s === 2) {
-                  if (!docVerified) e.docVerified = 'Document verification is required. Upload and verify your government ID.';
+                  if (!docVerified) {e.docVerified = 'Document verification is required. Upload and verify your government ID.';}
             }
             if (s === 3) {
-                  if (!livenessVerified) e.liveness = 'AI liveness verification is mandatory. Complete all live facial actions.';
+                  if (!livenessVerified) {e.liveness = 'AI liveness verification is mandatory. Complete all live facial actions.';}
             }
             if (s === 4) {
-                  if (!otpHook.otpVerified) e.otp = 'Please verify your email with OTP first';
+                  if (!otpHook.otpVerified) {e.otp = 'Please verify your email with OTP first';}
             }
             setErrors(e);
             return Object.keys(e).length === 0;
@@ -182,9 +182,9 @@ export default function CitizenSignup() {
             if (validateStep(step)) {
                   setStep(s => Math.min(s + 1, STEPS.length - 1));
             } else {
-                  if (step === 2 && !docVerified) toast.error(t('verification.documentRequired'));
-                  else if (step === 3 && !livenessVerified) toast.error(t('verification.livenessRequired'));
-                  else toast.error(t('validation.fillAllFields'));
+                  if (step === 2 && !docVerified) {toast.error(t('verification.documentRequired'));}
+                  else if (step === 3 && !livenessVerified) {toast.error(t('verification.livenessRequired'));}
+                  else {toast.error(t('validation.fillAllFields'));}
             }
       };
       const prevStep = () => { setStep(s => Math.max(s - 1, 0)); setErrors({}); };
@@ -192,7 +192,7 @@ export default function CitizenSignup() {
       // ── Submit ─────────────────────────────────────────────────────────────────
       const handleSubmit = async (e) => {
             e.preventDefault();
-            if (!validateStep(4)) return;
+            if (!validateStep(4)) {return;}
             if (!livenessVerified) { toast.error(t('verification.livenessRequired')); setStep(3); return; }
 
             setLoading(true);
@@ -204,7 +204,7 @@ export default function CitizenSignup() {
                   fd.append('livenessVerified', 'true');
                   fd.append('livenessSessionId', livenessSessionId || '');
                   fd.append('livenessScore', String(livenessScore));
-                  if (govtIdFile) fd.append('govtIdImage', govtIdFile);
+                  if (govtIdFile) {fd.append('govtIdImage', govtIdFile);}
                   if (liveImage) {
                         const blob = await fetch(liveImage).then(r => r.blob());
                         fd.append('liveImage', blob, 'liveness.jpg');
@@ -406,14 +406,14 @@ export default function CitizenSignup() {
                                     onVerified={(data) => {
                                           setDocVerified(true);
                                           setGovtIdFile(data.file);
-                                          if (data.extractedNumber) set('govtIdNumber', data.extractedNumber);
+                                          if (data.extractedNumber) {set('govtIdNumber', data.extractedNumber);}
 
                                           // Auto-fill form from Aadhaar OCR
                                           if (data.selectedType === 'aadhaar' && data.aadhaarDetails) {
                                                 const { name, dob, gender } = data.aadhaarDetails;
-                                                if (name && !form.name.trim()) set('name', name);
-                                                if (dob) set('dob', dob);
-                                                if (gender) set('gender', gender);
+                                                if (name && !form.name.trim()) {set('name', name);}
+                                                if (dob) {set('dob', dob);}
+                                                if (gender) {set('gender', gender);}
                                           }
 
                                           setErrors(p => ({ ...p, docVerified: '' }));

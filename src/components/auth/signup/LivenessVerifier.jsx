@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Webcam from 'react-webcam';
 import {
@@ -60,7 +60,7 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
       const isBlocked = cooldownSeconds > 0;
 
       const refreshAttemptStatus = useCallback(async () => {
-            if (!email) return;
+            if (!email) {return;}
             try {
                   const status = await getLivenessAttemptStatus(email);
                   setAttemptInfo(status);
@@ -72,7 +72,7 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
                         );
                   } else {
                         setCooldownSeconds(0);
-                        if (phase === PHASE.READY) setErrorMsg('');
+                        if (phase === PHASE.READY) {setErrorMsg('');}
                   }
             } catch {
                   /* ignore status check errors */
@@ -80,11 +80,11 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
       }, [email, phase]);
 
       useEffect(() => {
-            if (email && phase === PHASE.READY) refreshAttemptStatus();
+            if (email && phase === PHASE.READY) {refreshAttemptStatus();}
       }, [email, phase, refreshAttemptStatus]);
 
       useEffect(() => {
-            if (cooldownSeconds <= 0) return undefined;
+            if (cooldownSeconds <= 0) {return undefined;}
             const t = setInterval(() => {
                   setCooldownSeconds((s) => {
                         if (s <= 1) {
@@ -112,12 +112,12 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
       useEffect(() => {
             preload();
             return () => {
-                  if (loopRef.current) clearTimeout(loopRef.current);
+                  if (loopRef.current) {clearTimeout(loopRef.current);}
             };
       }, [preload]);
 
       const startSession = async () => {
-            if (sessionStartingRef.current || sessionLoading || isBlocked) return;
+            if (sessionStartingRef.current || sessionLoading || isBlocked) {return;}
             if (!email) {
                   toast.error('Enter your email in step 1 before liveness check.', { id: 'liveness-email' });
                   return;
@@ -145,7 +145,7 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
                         (err.code === 'ECONNABORTED'
                               ? 'Server timed out. Check that MongoDB is connected and restart the backend.'
                               : 'Could not start liveness session. Ensure the backend is running.');
-                  if (retryAfter > 0) setCooldownSeconds(retryAfter);
+                  if (retryAfter > 0) {setCooldownSeconds(retryAfter);}
                   setErrorMsg(msg);
                   setPhase(PHASE.READY);
                   toast.error(msg, { id: 'liveness-start-error' });
@@ -156,7 +156,7 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
       };
 
       const handleDevReset = async () => {
-            if (!email) return;
+            if (!email) {return;}
             try {
                   await devResetLiveness(email);
                   setCooldownSeconds(0);
@@ -170,7 +170,7 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
       };
 
       const beginChallenges = () => {
-            if (!tasks.length) return;
+            if (!tasks.length) {return;}
             taskIndexRef.current = 0;
             completedRef.current = [];
             setPhase(PHASE.CHALLENGE);
@@ -179,20 +179,20 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
       };
 
       useEffect(() => {
-            if (phase !== PHASE.CHALLENGE || !tasks.length) return;
+            if (phase !== PHASE.CHALLENGE || !tasks.length) {return;}
 
             let active = true;
             let lastRunAt = 0;
             let loopTimer = null;
 
             const scheduleNext = (delay = 0) => {
-                  if (!active) return;
+                  if (!active) {return;}
                   loopTimer = setTimeout(runTick, delay);
                   loopRef.current = loopTimer;
             };
 
             const runTick = async () => {
-                  if (!active) return;
+                  if (!active) {return;}
 
                   const video = webcamRef.current?.video;
                   if (!video || video.readyState < 2) {
@@ -202,7 +202,7 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
 
                   const idx = taskIndexRef.current;
                   const task = tasks[idx];
-                  if (!task) return;
+                  if (!task) {return;}
 
                   if (!runnerRef.current || runnerRef.current.task !== task) {
                         runnerRef.current = new LivenessChallengeRunner(task);
@@ -218,7 +218,7 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
                   lastRunAt = now;
                   try {
                         const result = await detectFaceWithLandmarks(video, { fast: true });
-                        if (!active) return;
+                        if (!active) {return;}
 
                         if (result.error === 'NO_FACE') {
                               setHint('No face detected — center your face in the oval');
@@ -271,7 +271,7 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
             runTick();
             return () => {
                   active = false;
-                  if (loopTimer) clearTimeout(loopTimer);
+                  if (loopTimer) {clearTimeout(loopTimer);}
             };
       }, [phase, tasks]);
 
@@ -297,7 +297,7 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
             } catch (err) {
                   const retryAfter = err.response?.data?.retryAfterSeconds;
                   const msg = err.response?.data?.message || 'Server verification failed';
-                  if (retryAfter > 0) setCooldownSeconds(retryAfter);
+                  if (retryAfter > 0) {setCooldownSeconds(retryAfter);}
                   setErrorMsg(msg);
                   setPhase(PHASE.FAILED);
                   toast.error(msg, { id: 'liveness-verify-error' });
@@ -306,7 +306,7 @@ export default function LivenessVerifier({ email, govtIdType, docVerified, onVer
       };
 
       const resetAll = () => {
-            if (loopRef.current) clearTimeout(loopRef.current);
+            if (loopRef.current) {clearTimeout(loopRef.current);}
             setSessionId(null);
             setTasks([]);
             setTaskIndex(0);

@@ -77,8 +77,8 @@ export function pickRandomTasks(count = 3) {
 export const isLivenessModelsLoaded = () => modelsLoaded;
 
 export const loadLivenessModels = async (onProgress) => {
-      if (modelsLoaded) return;
-      if (loadPromise) return loadPromise;
+      if (modelsLoaded) {return;}
+      if (loadPromise) {return loadPromise;}
 
       loadPromise = (async () => {
             const baseUrl = getModelsBaseUrl();
@@ -112,13 +112,13 @@ export const loadLivenessModels = async (onProgress) => {
 };
 
 export async function detectFaceWithLandmarks(videoOrImage, { fast = false } = {}) {
-      if (!modelsLoaded) await loadLivenessModels();
+      if (!modelsLoaded) {await loadLivenessModels();}
       const detections = await faceapi
             .detectAllFaces(videoOrImage, detectorOptions(fast))
             .withFaceLandmarks();
 
-      if (!detections.length) return { error: 'NO_FACE' };
-      if (detections.length > 1) return { error: 'MULTIPLE_FACES', count: detections.length };
+      if (!detections.length) {return { error: 'NO_FACE' };}
+      if (detections.length > 1) {return { error: 'MULTIPLE_FACES', count: detections.length };}
 
       const det = detections[0];
       const scoreMin = fast ? REALTIME_SCORE_THRESHOLD : MIN_DETECTION_SCORE;
@@ -133,11 +133,11 @@ export function createMotionTracker(maxSamples = 40) {
       const samples = [];
       return {
             push(nosePoint) {
-                  if (nosePoint) samples.push({ x: nosePoint.x, y: nosePoint.y, t: Date.now() });
-                  if (samples.length > maxSamples) samples.shift();
+                  if (nosePoint) {samples.push({ x: nosePoint.x, y: nosePoint.y, t: Date.now() });}
+                  if (samples.length > maxSamples) {samples.shift();}
             },
             getVariance() {
-                  if (samples.length < 8) return 0;
+                  if (samples.length < 8) {return 0;}
                   const mx = samples.reduce((s, p) => s + p.x, 0) / samples.length;
                   const my = samples.reduce((s, p) => s + p.y, 0) / samples.length;
                   const v =
@@ -216,7 +216,7 @@ export class LivenessChallengeRunner {
             const openThresh = baseline * 0.88;
 
             this.earHistory.push(ear);
-            if (this.earHistory.length > BLINK_EAR_HISTORY) this.earHistory.shift();
+            if (this.earHistory.length > BLINK_EAR_HISTORY) {this.earHistory.shift();}
 
             if (ear >= openThresh * 0.9) {
                   this.earBaseline = baseline * 0.92 + ear * 0.08;

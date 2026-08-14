@@ -31,7 +31,7 @@ let isShuttingDown = false;
  */
 export function registerShutdownHandlers(httpServer) {
       const shutdown = async (signal) => {
-            if (isShuttingDown) return;
+            if (isShuttingDown) {return;}
             isShuttingDown = true;
 
             console.log(`\n\n🔴 [shutdown] Received ${signal} — starting graceful shutdown…`);

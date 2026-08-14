@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Clock, CheckCircle2, AlertTriangle, Siren, Sparkles, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

@@ -1,6 +1,6 @@
 /** Normalize API user/admin payload for localStorage + context */
 export function normalizeAuthUser(raw) {
-      if (!raw) return null;
+      if (!raw) {return null;}
       const id = raw.id || raw._id;
       const role = raw.role || 'citizen';
       return {
@@ -51,10 +51,10 @@ export function readStoredToken() {
       try {
             // Admin token takes priority — admin dashboard always uses this
             const adminToken = localStorage.getItem(STORAGE_KEYS.adminToken);
-            if (adminToken) return adminToken;
+            if (adminToken) {return adminToken;}
 
             const citizenToken = localStorage.getItem(STORAGE_KEYS.citizenToken);
-            if (citizenToken) return citizenToken;
+            if (citizenToken) {return citizenToken;}
 
             // Legacy fallback — only if no role-specific key exists
             return localStorage.getItem(STORAGE_KEYS.token) || null;
@@ -72,19 +72,19 @@ export function readStoredAuth() {
                   || localStorage.getItem(STORAGE_KEYS.admin); // legacy fallback
             if (adminRaw) {
                   const admin = normalizeAuthUser(JSON.parse(adminRaw));
-                  if (admin?.role === 'admin') return admin;
+                  if (admin?.role === 'admin') {return admin;}
             }
             // Citizen
             const citizenRaw = localStorage.getItem(STORAGE_KEYS.citizenData);
             if (citizenRaw) {
                   const citizen = normalizeAuthUser(JSON.parse(citizenRaw));
-                  if (citizen?.role === 'citizen') return citizen;
+                  if (citizen?.role === 'citizen') {return citizen;}
             }
             // Legacy 'user' key — only if it is NOT an officer (prevents bleed-over)
             const userRaw = localStorage.getItem(STORAGE_KEYS.user);
             if (userRaw) {
                   const u = normalizeAuthUser(JSON.parse(userRaw));
-                  if (u?.role && u.role !== 'officer') return u;
+                  if (u?.role && u.role !== 'officer') {return u;}
             }
             return null;
       } catch {
@@ -101,7 +101,7 @@ export function readStoredAdmin() {
 export function readStoredOfficer() {
       try {
             const raw = localStorage.getItem(STORAGE_KEYS.officerData);
-            if (!raw) return null;
+            if (!raw) {return null;}
             const officer = normalizeAuthUser(JSON.parse(raw));
             return officer?.role === 'officer' ? officer : null;
       } catch {
@@ -129,7 +129,7 @@ export function persistAdminSession(token, adminData, { debug = false } = {}) {
             admin._id = admin.id;
       }
       if (!token || !admin?.id) {
-            if (debug) console.warn('persistAdminSession: missing token or admin id', adminData);
+            if (debug) {console.warn('persistAdminSession: missing token or admin id', adminData);}
             return false;
       }
       localStorage.setItem(STORAGE_KEYS.adminToken, token);
@@ -151,12 +151,12 @@ export function persistAdminSession(token, adminData, { debug = false } = {}) {
 export function persistAuthSession(token, userData, { debug = false } = {}) {
       const user = normalizeAuthUser(userData);
       if (!token || !user?.role) {
-            if (debug) console.warn('persistAuthSession: missing token or role', { token: !!token, user });
+            if (debug) {console.warn('persistAuthSession: missing token or role', { token: !!token, user });}
             return false;
       }
       // If somehow an admin or officer payload arrives here, route to the correct persister
-      if (user.role === 'admin') return persistAdminSession(token, userData, { debug });
-      if (user.role === 'officer') return persistOfficerSession(token, userData, { debug });
+      if (user.role === 'admin') {return persistAdminSession(token, userData, { debug });}
+      if (user.role === 'officer') {return persistOfficerSession(token, userData, { debug });}
 
       // Citizen only from here
       localStorage.setItem(STORAGE_KEYS.citizenToken, token);
@@ -176,7 +176,7 @@ export function persistAuthSession(token, userData, { debug = false } = {}) {
 export function persistOfficerSession(token, officerData, { debug = false } = {}) {
       const officer = normalizeAuthUser({ ...officerData, role: 'officer' });
       if (!token || !officer?.id) {
-            if (debug) console.warn('persistOfficerSession: missing token or officer id', officerData);
+            if (debug) {console.warn('persistOfficerSession: missing token or officer id', officerData);}
             return false;
       }
       localStorage.setItem(STORAGE_KEYS.officerToken, token);

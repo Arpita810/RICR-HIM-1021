@@ -11,7 +11,7 @@ export function logError(error, context = {}) {
       };
 
       errorQueue.push(payload);
-      if (errorQueue.length > 50) errorQueue.shift();
+      if (errorQueue.length > 50) {errorQueue.shift();}
 
       if (isDev) {
             console.error('[e-Samadhan AI]', payload);
