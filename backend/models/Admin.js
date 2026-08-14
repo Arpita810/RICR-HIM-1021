@@ -16,7 +16,7 @@ const adminSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 adminSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {return next();}
+  if (!this.isModified('password')) { return next(); }
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
@@ -39,6 +39,14 @@ adminSchema.methods.getSignedJwtToken = function () {
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE || '30d' }
   );
+};
+
+// ── SECURITY: Exclude sensitive fields from JSON responses ──────────────────────
+adminSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  // Never expose password hash via API
+  delete obj.password;
+  return obj;
 };
 
 const Admin = mongoose.model('Admin', adminSchema);

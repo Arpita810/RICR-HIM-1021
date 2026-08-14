@@ -67,7 +67,7 @@ const officerSchema = new mongoose.Schema({
 
 // ── Hash password ─────────────────────────────────────────────────────────────
 officerSchema.pre('save', async function (next) {
-  if (!this.isModified('password') || !this.password) {return next();}
+  if (!this.isModified('password') || !this.password) { return next(); }
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
@@ -106,6 +106,15 @@ officerSchema.methods.recalcStats = async function () {
   this.complaintsInProgress = inProgress;
   this.resolutionRate = assigned > 0 ? Math.round((resolved / assigned) * 100) : 0;
   await this.save({ validateBeforeSave: false });
+};
+
+// ── SECURITY: Exclude sensitive fields from JSON responses ──────────────────────
+officerSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  // Never expose password hash or sensitive session data via API
+  delete obj.password;
+  delete obj.activeSession?.token; // Remove stored JWT tokens
+  return obj;
 };
 
 const Officer = mongoose.model('Officer', officerSchema);
