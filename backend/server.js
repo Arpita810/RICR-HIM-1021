@@ -18,6 +18,7 @@ import clearDatabase from './config/clearDB.js';
 import { printEnvReport } from './config/validateEnv.js';
 import { verifyEmailConnection } from './utils/sendEmail.js';
 import errorHandler from './middleware/errorHandler.js';
+import { sanitizeInputs } from './middleware/sanitize.js';
 
 // ── Dev database system ───────────────────────────────────────────────────────
 import initializeDatabase from './utils/dbInitializer.js';
@@ -82,7 +83,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // ── Ensure upload dirs exist (also handled by initializeDatabase) ─────────────
 ['uploads/profiles', 'uploads/complaints', 'uploads/govt-ids', 'uploads/liveness', 'uploads/ids', 'uploads/reports'].forEach(dir => {
       const full = path.join(__dirname, dir);
-      if (!fs.existsSync(full)) {fs.mkdirSync(full, { recursive: true });}
+      if (!fs.existsSync(full)) { fs.mkdirSync(full, { recursive: true }); }
 });
 
 // ── Security ──────────────────────────────────────────────────────────────────
@@ -122,7 +123,11 @@ app.use('/api/auth/forgot-password', authLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
-if (process.env.NODE_ENV === 'development') {app.use(morgan('dev'));}
+
+// ── SECURITY: Sanitize all inputs (after JSON parsing, before routes) ─────────
+app.use(sanitizeInputs);
+
+if (process.env.NODE_ENV === 'development') { app.use(morgan('dev')); }
 
 // ── Static files ──────────────────────────────────────────────────────────────
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

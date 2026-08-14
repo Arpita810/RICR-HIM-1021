@@ -73,6 +73,12 @@ const formatError = (err, req) => {
             code = 'INVALID_JSON';
       }
 
+      // ── SECURITY: In production, never expose stack traces or detailed errors ──
+      // Log full details server-side only
+      if (process.env.NODE_ENV === 'production' && statusCode >= 500) {
+            message = 'Something went wrong. Please try again later.';
+      }
+
       return { statusCode, message, code };
 };
 
@@ -106,9 +112,9 @@ const errorHandler = (err, req, res, next) => {
             code,
       };
 
-      if (err.retryAfterSeconds != null) {payload.retryAfterSeconds = err.retryAfterSeconds;}
-      if (err.blockedUntil) {payload.blockedUntil = err.blockedUntil;}
-      if (err.attempts != null) {payload.attempts = err.attempts;}
+      if (err.retryAfterSeconds != null) { payload.retryAfterSeconds = err.retryAfterSeconds; }
+      if (err.blockedUntil) { payload.blockedUntil = err.blockedUntil; }
+      if (err.attempts != null) { payload.attempts = err.attempts; }
 
       res.status(statusCode).json({
             ...payload,

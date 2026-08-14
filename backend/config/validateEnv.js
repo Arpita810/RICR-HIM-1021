@@ -6,25 +6,54 @@ const REQUIRED = [
 const RECOMMENDED = [
       { key: 'CLIENT_URL', description: 'Frontend URL for CORS' },
       { key: 'SMTP_HOST', description: 'Email SMTP host (for OTP / password reset)' },
+      { key: 'GEMINI_API_KEY', description: 'Google Gemini API key (for AI features)' },
 ];
 
 export function validateEnv() {
       const missing = [];
       const warnings = [];
 
+      // Check required variables
       for (const { key, description } of REQUIRED) {
             if (!process.env[key]?.trim()) {
                   missing.push({ key, description });
             }
       }
 
-      if (process.env.JWT_SECRET && process.env.JWT_SECRET.length < 32) {
+      // ── SECURITY: Enforce strong JWT_SECRET ──────────────────────────────────
+      if (process.env.JWT_SECRET) {
+            if (process.env.JWT_SECRET.length < 32) {
+                  warnings.push({
+                        key: 'JWT_SECRET',
+                        message: 'JWT_SECRET should be at least 32 characters. Generate with: node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"',
+                  });
+            }
+            // Check for weak/predictable patterns
+            if (/admin|secret|key|password|123|test/i.test(process.env.JWT_SECRET)) {
+                  warnings.push({
+                        key: 'JWT_SECRET',
+                        message: 'JWT_SECRET appears to use predictable patterns. Use a cryptographically random value.',
+                  });
+            }
+      }
+
+      // ── SECURITY: Enforce strong ADMIN_SECRET_KEY ──────────────────────────────
+      if (process.env.ADMIN_SECRET_KEY && process.env.ADMIN_SECRET_KEY.length < 32) {
             warnings.push({
-                  key: 'JWT_SECRET',
-                  message: 'JWT_SECRET should be at least 32 characters in production.',
+                  key: 'ADMIN_SECRET_KEY',
+                  message: 'ADMIN_SECRET_KEY should be at least 32 characters. Generate a strong random value.',
             });
       }
 
+      // ── SECURITY: Warn if MongoDB credentials are weak ──────────────────────────
+      if (process.env.MONGO_URI && /(\w+):(\1)/.test(process.env.MONGO_URI)) {
+            warnings.push({
+                  key: 'MONGO_URI',
+                  message: 'MongoDB username and password appear to be identical or weak. Use strong credentials.',
+            });
+      }
+
+      // Check recommended variables
       for (const { key, description } of RECOMMENDED) {
             if (!process.env[key]?.trim()) {
                   warnings.push({ key, message: `Missing ${key}: ${description}` });

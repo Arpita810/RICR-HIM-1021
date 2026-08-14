@@ -9,8 +9,12 @@
     "preview": "vite preview",
     "server": "cd backend && npm run dev",
     "download-models": "node scripts/downloadModels.js",
+<<<<<<< HEAD
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
+=======
+    "lint": "npm --prefix backend run lint && eslint ."
+>>>>>>> 984042a2 (updte  ESLint / Equivalent Linter)
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
@@ -54,16 +58,28 @@
     "tsparticles-slim": "^2.12.0"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "@eslint/js": "^9.39.5",
+=======
+    "@eslint/js": "^9.0.0",
+>>>>>>> 984042a2 (updte  ESLint / Equivalent Linter)
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
+<<<<<<< HEAD
     "eslint": "^9.39.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
+=======
+    "eslint": "^9.0.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "globals": "^14.0.0",
+>>>>>>> 984042a2 (updte  ESLint / Equivalent Linter)
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
     "vite": "^5.3.1"

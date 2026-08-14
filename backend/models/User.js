@@ -81,7 +81,7 @@ const userSchema = new mongoose.Schema(
 
 // Hash password
 userSchema.pre('save', async function (next) {
-      if (!this.isModified('password')) {return next();}
+      if (!this.isModified('password')) { return next(); }
       this.password = await bcrypt.hash(this.password, 12);
       next();
 });
@@ -110,6 +110,23 @@ userSchema.methods.getResetPasswordToken = function () {
       this.resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
       this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
       return token;
+};
+
+// ── SECURITY: Exclude sensitive fields from JSON responses ──────────────────────
+userSchema.methods.toJSON = function () {
+      const obj = this.toObject();
+      // Remove sensitive fields that should never be exposed via API
+      delete obj.password;
+      delete obj.govtIdNumber;
+      delete obj.aadhaarNumber;
+      delete obj.resetPasswordToken;
+      delete obj.resetPasswordExpire;
+      delete obj.emailVerificationToken;
+      delete obj.emailVerificationExpire;
+      delete obj.tokenBlacklist;
+      delete obj.loginAttempts;
+      delete obj.lockoutUntil;
+      return obj;
 };
 
 userSchema.index({ role: 1 });

@@ -8,7 +8,8 @@
             "start": "node --dns-result-order=ipv4first server.js",
             "dev": "nodemon --exec \"node --dns-result-order=ipv4first\" server.js",
             "seed": "node utils/seedDepartments.js",
-            "db:check": "node scripts/checkMongo.js"
+            "db:check": "node scripts/checkMongo.js",
+            "lint": "eslint ."
       },
       "dependencies": {
             "@google/generative-ai": "^0.24.1",
@@ -28,6 +29,9 @@
             "socket.io": "^4.8.3"
       },
       "devDependencies": {
+            "@eslint/js": "^9.0.0",
+            "eslint": "^9.0.0",
+            "globals": "^14.0.0",
             "nodemon": "^3.1.4"
       },
       "keywords": [],
