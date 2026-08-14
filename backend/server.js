@@ -82,17 +82,53 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // ── Ensure upload dirs exist (also handled by initializeDatabase) ─────────────
 ['uploads/profiles', 'uploads/complaints', 'uploads/govt-ids', 'uploads/liveness', 'uploads/ids', 'uploads/reports'].forEach(dir => {
       const full = path.join(__dirname, dir);
-      if (!fs.existsSync(full)) {fs.mkdirSync(full, { recursive: true });}
+      if (!fs.existsSync(full)) { fs.mkdirSync(full, { recursive: true }); }
 });
 
 // ── Security ──────────────────────────────────────────────────────────────────
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
+app.use(helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+      contentSecurityPolicy: {
+            directives: {
+                  defaultSrc: ["'self'"],
+                  imgSrc: ["'self'", 'data:', 'https://images.unsplash.com', 'https://*.tile.openstreetmap.org'],
+                  connectSrc: ["'self'", 'https://*.googleapis.com', 'https://*.grok.com'],
+                  scriptSrc: ["'self'"],
+                  styleSrc: ["'self'", "'unsafe-inline'"],
+                  objectSrc: ["'none'"],
+                  frameAncestors: ["'none'"],
+            },
+      },
+      hsts: {
+            maxAge: 31536000,
+            includeSubDomains: true,
+            preload: true,
+      },
+      noSniff: true,
+      xFrameOptions: { action: 'deny' },
+}));
+
+const allowedOrigins = [
+      process.env.CLIENT_URL,
+      'http://localhost:5173',
+      'http://127.0.0.1:5173',
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+].filter(Boolean);
 
 app.use(cors({
-      origin: process.env.CLIENT_URL || 'http://localhost:5173',
+      origin(origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                  callback(null, true);
+                  return;
+            }
+            callback(new Error('Not allowed by CORS'));
+      },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Department'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Department', 'X-Requested-With'],
 }));
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
@@ -122,7 +158,7 @@ app.use('/api/auth/forgot-password', authLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
-if (process.env.NODE_ENV === 'development') {app.use(morgan('dev'));}
+if (process.env.NODE_ENV === 'development') { app.use(morgan('dev')); }
 
 // ── Static files ──────────────────────────────────────────────────────────────
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

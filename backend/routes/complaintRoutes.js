@@ -6,6 +6,10 @@ import {
 } from '../controllers/complaintController.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { complaintUpload } from '../services/uploadService.js';
+import {
+      createComplaintValidators,
+      handleValidationErrors,
+} from '../middleware/validation.js';
 
 const router = express.Router();
 
@@ -17,7 +21,7 @@ router.get('/analytics', authorize('officer', 'admin'), getAnalytics);
 router.post('/analyze', analyzeComplaintText);
 
 // CRUD
-router.post('/', authorize('citizen'), complaintUpload.array('attachments', 5), fileComplaint);
+router.post('/', authorize('citizen'), complaintUpload.array('attachments', 5), createComplaintValidators, handleValidationErrors, fileComplaint);
 router.get('/', getComplaints);
 router.get('/:id', getComplaint);
 

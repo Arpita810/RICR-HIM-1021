@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { getApiOriginUrl } from '../../utils/env';
 import {
   readStoredOfficer,
   readStoredOfficerToken,
@@ -93,7 +94,7 @@ function DetailModal({ complaint, source, note, setNote, actionLoading, acceptin
 
   if (!complaint) { return null; }
   const isQueue = source === 'queue';
-  const apiBase = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
+  const apiBase = getApiOriginUrl();
 
   const handleGenerateReport = async () => {
     if (!note.trim()) {

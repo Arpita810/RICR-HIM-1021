@@ -4,6 +4,7 @@ import { retry, isRetryableError } from '../utils/retry';
 import { getErrorMessage, isAuthError, isNetworkError, parseApiResponse } from '../utils/apiErrors';
 import { logError } from '../utils/monitoring';
 import { isAuthFresh, STORAGE_KEYS, clearOfficerSession } from '../utils/authStorage';
+import { getApiBaseUrl } from '../utils/env';
 
 const AUTH_PATHS = ['/login', '/signup', '/forgot-password', '/reset-password', '/admin/login', '/admin/register'];
 const SILENT_PATHS = ['/auth/me', '/health', '/complaints/citizen/stats', '/admin/', '/officer/'];
@@ -19,7 +20,7 @@ const isSilentRequest = (config) => {
 };
 
 const api = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+      baseURL: getApiBaseUrl() || '/api',
       withCredentials: true,
       headers: { 'Content-Type': 'application/json' },
       timeout: 15000,
@@ -74,14 +75,14 @@ api.interceptors.response.use(
                               })
                         );
                   }
-                  if (parsed !== null) {response.data = parsed;}
+                  if (parsed !== null) { response.data = parsed; }
             }
             return response;
       },
       async (error) => {
             const config = error.config;
 
-            if (!config) {return Promise.reject(error);}
+            if (!config) { return Promise.reject(error); }
 
             const shouldRetry =
                   config._retryCount < 3 &&

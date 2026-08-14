@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { STORAGE_KEYS } from '../utils/authStorage';
+import { getApiOriginUrl } from '../utils/env';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:5000';
+const SOCKET_URL = getApiOriginUrl();
 
 export function useSocket(handlers = {}, { role = 'auto' } = {}) {
       // Determine which token to use based on role context
@@ -28,7 +29,7 @@ export function useSocket(handlers = {}, { role = 'auto' } = {}) {
       handlersRef.current = handlers;
 
       useEffect(() => {
-            if (!token) {return undefined;}
+            if (!token || !SOCKET_URL) { return undefined; }
 
             const socket = io(SOCKET_URL, {
                   auth: { token },

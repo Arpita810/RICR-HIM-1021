@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { getApiOriginUrl } from '../../utils/env';
 import { getOfficerDetail } from '../../api/admin';
 import { deptLabel } from '../../utils/departmentMeta';
 
@@ -103,7 +104,7 @@ function ComplaintMap({ lat, lng, title }) {
 // ── Complaint Detail Modal (nested) ──────────────────────────────────────────
 function ComplaintDetailModal({ complaint, onClose }) {
       const { t } = useTranslation();
-      const apiBase = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
+      const apiBase = getApiOriginUrl();
 
       // Log view activity when modal opens
       useEffect(() => {

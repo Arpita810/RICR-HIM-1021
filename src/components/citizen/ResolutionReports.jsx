@@ -7,6 +7,7 @@ import {
 import toast from 'react-hot-toast';
 import { getCitizenReports, submitReportFeedback } from '../../api/reports';
 import StatusBadge from './StatusBadge';
+import { getApiOriginUrl } from '../../utils/env';
 
 export default function ResolutionReports() {
       const [reports, setReports] = useState([]);
@@ -19,7 +20,7 @@ export default function ResolutionReports() {
       const [submittingRating, setSubmittingRating] = useState(false);
       const [downloadingId, setDownloadingId] = useState(null);
 
-      const apiBase = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
+      const apiBase = getApiOriginUrl();
 
       const fetchReports = useCallback(async () => {
             setLoading(true);
@@ -99,7 +100,7 @@ export default function ResolutionReports() {
       };
 
       const formatDate = (iso) => {
-            if (!iso) {return '—';}
+            if (!iso) { return '—'; }
             return new Date(iso).toLocaleDateString('en-IN', {
                   day: '2-digit',
                   month: 'short',
@@ -386,8 +387,8 @@ export default function ResolutionReports() {
                                                             >
                                                                   <Star
                                                                         className={`w-9 h-9 transition-colors ${star <= (hoverRating || rating)
-                                                                                    ? 'text-amber-500'
-                                                                                    : 'text-slate-200'
+                                                                              ? 'text-amber-500'
+                                                                              : 'text-slate-200'
                                                                               }`}
                                                                         fill={star <= (hoverRating || rating) ? '#f59e0b' : 'none'}
                                                                         strokeWidth={1.5}
