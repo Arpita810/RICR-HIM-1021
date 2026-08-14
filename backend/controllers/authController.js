@@ -6,23 +6,37 @@ import sendToken from '../utils/sendToken.js';
 import sendEmail, { forgotPasswordEmail } from '../utils/sendEmail.js';
 import { resolveDepartmentSlug } from '../utils/departmentResolve.js';
 
-const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY || 'ESAMADHAN_ADMIN_2025';
+// ── SECURITY: Fields that must NEVER be set/changed via user input ────────────
+const PROTECTED_FIELDS = ['role', 'adminLevel', 'adminSecretVerified', 'managedDepartment', 'isActive', 'loginAttempts', 'lockoutUntil', 'tokenBlacklist', 'passwordChangedAt'];
 
-// @desc  Register
+// @desc  Register (Citizen ONLY — admin registration goes through /api/admin/register)
 // @route POST /api/auth/register
 export const register = async (req, res, next) => {
       try {
             const {
-                  name, email, password, role, phone,
-                  // citizen
+                  name, email, password, phone,
+                  // citizen fields
                   address, city, state, govtIdType, govtIdNumber,
-                  // officer
-                  department, employeeId, governmentId,
-                  // admin
-                  adminSecretKey,
                   // otp
                   otpVerified,
             } = req.body;
+
+            // ── SECURITY: This endpoint is for CITIZEN registration ONLY ──────────
+            // Admin registration must go through /api/admin/register with ADMIN_SECRET_KEY
+            // Officer registration must go through /api/officer/register
+            // NEVER trust the 'role' field from the frontend
+            const userRole = 'citizen';
+
+            // Validate required fields
+            if (!name?.trim()) {
+                  return res.status(400).json({ success: false, message: 'Name is required' });
+            }
+            if (!email?.trim() || !/^\S+@\S+\.\S+$/.test(email)) {
+                  return res.status(400).json({ success: false, message: 'Valid email is required' });
+            }
+            if (!password || password.length < 8) {
+                  return res.status(400).json({ success: false, message: 'Password must be at least 8 characters' });
+            }
 
             // Check duplicate
             const exists = await User.findOne({ email: email?.toLowerCase() });
@@ -30,107 +44,50 @@ export const register = async (req, res, next) => {
                   return res.status(400).json({ success: false, message: 'An account with this email already exists' });
             }
 
-            // Validate role
-            const validRoles = ['citizen', 'officer', 'admin'];
-            const userRole = validRoles.includes(role) ? role : 'citizen';
-
-            if (userRole === 'officer') {
+            // ✅ MANDATORY: Citizens must pass AI liveness verification
+            const { livenessSessionId } = req.body;
+            if (!livenessSessionId) {
                   return res.status(400).json({
                         success: false,
-                        message: 'Officer registration must be completed through /api/officer/register after your department admin creates your account.',
-                        code: 'OFFICER_REGISTRATION_BLOCKED',
+                        message: 'AI liveness verification is mandatory. Complete live face checks before registration.',
+                  });
+            }
+            const liveness = await LivenessSession.findOne({
+                  sessionId: livenessSessionId,
+                  verificationStatus: 'verified',
+                  livenessVerified: true,
+            });
+            if (!liveness) {
+                  return res.status(400).json({
+                        success: false,
+                        message: 'Invalid or incomplete liveness verification. Please complete live verification again.',
+                  });
+            }
+            if (liveness.email && liveness.email !== email?.toLowerCase()) {
+                  return res.status(403).json({
+                        success: false,
+                        message: 'Liveness session does not match registration email.',
+                  });
+            }
+            if (!req.files?.liveImage?.[0]) {
+                  return res.status(400).json({
+                        success: false,
+                        message: 'Live capture image is required after liveness verification.',
                   });
             }
 
-            // Admin secret + department (required for department-based access)
-            if (userRole === 'admin') {
-                  if (!department?.trim()) {
-                        return res.status(400).json({
-                              success: false,
-                              message: 'Please select department',
-                              code: 'DEPARTMENT_REQUIRED',
-                        });
-                  }
-                  const departmentSlug = resolveDepartmentSlug(department);
-                  if (!departmentSlug) {
-                        return res.status(400).json({
-                              success: false,
-                              message: 'Invalid department selected',
-                              code: 'INVALID_DEPARTMENT',
-                        });
-                  }
-                  if (adminSecretKey !== ADMIN_SECRET) {
-                        return res.status(403).json({
-                              success: false,
-                              message: 'Invalid Admin Secret Key',
-                              code: 'INVALID_SECRET',
-                        });
-                  }
-                  req._adminDepartmentSlug = departmentSlug;
-            }
-
-            // ✅ MANDATORY: Citizens must pass AI liveness verification
-            if (userRole === 'citizen') {
-                  const { livenessSessionId } = req.body;
-                  if (!livenessSessionId) {
-                        return res.status(400).json({
-                              success: false,
-                              message: 'AI liveness verification is mandatory. Complete live face checks before registration.',
-                        });
-                  }
-                  const liveness = await LivenessSession.findOne({
-                        sessionId: livenessSessionId,
-                        verificationStatus: 'verified',
-                        livenessVerified: true,
-                  });
-                  if (!liveness) {
-                        return res.status(400).json({
-                              success: false,
-                              message: 'Invalid or incomplete liveness verification. Please complete live verification again.',
-                        });
-                  }
-                  if (liveness.email && liveness.email !== email?.toLowerCase()) {
-                        return res.status(403).json({
-                              success: false,
-                              message: 'Liveness session does not match registration email.',
-                        });
-                  }
-                  if (!req.files?.liveImage?.[0]) {
-                        return res.status(400).json({
-                              success: false,
-                              message: 'Live capture image is required after liveness verification.',
-                        });
-                  }
-            }
-
-            // Build user data
+            // Build user data — role is ALWAYS 'citizen'
             const userData = { name, email, password, role: userRole, phone };
 
-            if (userRole === 'citizen') {
-                  const { pincode, latitude, longitude, nearbyLocation, completeAddress, dob, gender } = req.body;
-                  Object.assign(userData, {
-                        nearbyLocation,
-                        completeAddress,
-                        address: completeAddress || req.body.address, // legacy fallback
-                        city, state, pincode, latitude, longitude,
-                        dob, gender,
-                        govtIdType, govtIdNumber,
-                  });
-            }
-            if (userRole === 'officer') {
-                  Object.assign(userData, {
-                        department,
-                        employeeId,
-                        governmentId,
-                        officerStatus: 'pending',
-                        isActive: false,
-                  });
-            }
-            if (userRole === 'admin') {
-                  userData.adminSecretVerified = true;
-                  userData.adminLevel = 'department_admin';
-                  userData.managedDepartment = req._adminDepartmentSlug || resolveDepartmentSlug(department) || '';
-            }
+            const { pincode, latitude, longitude, nearbyLocation, completeAddress, dob, gender } = req.body;
+            Object.assign(userData, {
+                  nearbyLocation,
+                  completeAddress,
+                  address: completeAddress || req.body.address, // legacy fallback
+                  city, state, pincode, latitude, longitude,
+                  dob, gender,
+                  govtIdType, govtIdNumber,
+            });
 
             // File uploads
             if (req.files) {
@@ -169,11 +126,25 @@ export const login = async (req, res, next) => {
 
             const user = await User.findOne({ email }).select('+password');
             if (!user || !(await user.matchPassword(password))) {
+                  // Increment login attempts on failure (if user exists)
+                  if (user) await user.incrementLoginAttempts();
                   return res.status(401).json({ success: false, message: 'Invalid email or password' });
             }
+
+            // Check account lockout
+            if (user.isLocked()) {
+                  return res.status(401).json({
+                        success: false,
+                        message: 'Account temporarily locked due to too many failed login attempts. Try again in 15 minutes.',
+                  });
+            }
+
             if (!user.isActive) {
                   return res.status(401).json({ success: false, message: 'Account deactivated. Contact support.' });
             }
+
+            // Reset login attempts on successful login
+            await user.resetLoginAttempts();
 
             user.lastLogin = new Date();
             await user.save({ validateBeforeSave: false });
@@ -187,6 +158,23 @@ export const login = async (req, res, next) => {
 // @route POST /api/auth/logout
 export const logout = async (req, res, next) => {
       try {
+            // Blacklist the current token so it can't be reused
+            const token = req.cookies?.token
+                  || (req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.split(' ')[1] : null);
+
+            if (token && req.user?.id) {
+                  try {
+                        const user = await User.findById(req.user.id);
+                        if (user && user.addToBlacklist) {
+                              const decoded = await import('jsonwebtoken').then(jwt => jwt.default.decode(token));
+                              const expiresAt = decoded?.exp ? new Date(decoded.exp * 1000) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+                              await user.addToBlacklist(token, expiresAt);
+                        }
+                  } catch {
+                        // Token blacklisting is best-effort; don't block logout
+                  }
+            }
+
             res.cookie('token', 'none', { expires: new Date(Date.now() + 5000), httpOnly: true });
             res.status(200).json({ success: true, message: 'Logged out successfully' });
       } catch (error) { next(error); }
@@ -200,6 +188,7 @@ export const getMe = async (req, res, next) => {
             if (!u) {
                   return res.status(401).json({ success: false, message: 'Not authorized' });
             }
+            // SECURITY: Never expose password, tokens, or sensitive internal fields
             const user = {
                   _id: u._id,
                   id: u._id || u.id,
@@ -253,6 +242,9 @@ export const forgotPassword = async (req, res, next) => {
 export const resetPassword = async (req, res, next) => {
       try {
             const { password } = req.body;
+            if (!password || password.length < 8) {
+                  return res.status(400).json({ success: false, message: 'Password must be at least 8 characters' });
+            }
             const hashed = crypto.createHash('sha256').update(req.params.token).digest('hex');
             const user = await User.findOne({ resetPasswordToken: hashed, resetPasswordExpire: { $gt: Date.now() } });
             if (!user) return res.status(400).json({ success: false, message: 'Invalid or expired token.' });
@@ -270,6 +262,9 @@ export const resetPassword = async (req, res, next) => {
 export const updatePassword = async (req, res, next) => {
       try {
             const { currentPassword, newPassword } = req.body;
+            if (!newPassword || newPassword.length < 8) {
+                  return res.status(400).json({ success: false, message: 'New password must be at least 8 characters' });
+            }
             const user = await User.findById(req.user.id).select('+password');
             if (!(await user.matchPassword(currentPassword))) {
                   return res.status(401).json({ success: false, message: 'Current password is incorrect' });

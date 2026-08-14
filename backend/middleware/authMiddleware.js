@@ -6,6 +6,11 @@ import {
       isAdminJwt,
 } from '../utils/adminAuth.js';
 
+/**
+ * protectAdmin — Verifies JWT and ensures the user is an admin.
+ * Sets req.admin with admin context for backward compatibility with admin controllers.
+ * Also sets req.user for consistency with the consolidated auth system.
+ */
 export const protectAdmin = async (req, res, next) => {
       let token;
 
@@ -18,10 +23,9 @@ export const protectAdmin = async (req, res, next) => {
       }
 
       if (!token) {
-            console.warn('[protectAdmin] No token found in request');
             return res.status(401).json({
                   success: false,
-                  message: 'Not authorized. Please log in.',
+                  message: 'Authentication required',
                   code: 'NO_TOKEN',
             });
       }
@@ -29,20 +33,8 @@ export const protectAdmin = async (req, res, next) => {
       try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            if (process.env.NODE_ENV !== 'production') {
-                  console.log('TOKEN:', token ? `${token.slice(0, 24)}...` : 'missing');
-            }
-            console.log('DECODED:', {
-                  id: decoded.id,
-                  email: decoded.email,
-                  role: decoded.role,
-                  department: decoded.department,
-                  managedDepartment: decoded.managedDepartment,
-                  adminLevel: decoded.adminLevel,
-            });
-
+            // SECURITY: Verify role from JWT claims — must be admin
             if (!isAdminJwt(decoded)) {
-                  console.warn('[protectAdmin] Invalid admin JWT:', decoded);
                   return res.status(403).json({
                         success: false,
                         message: 'Access denied. Admin role required.',
@@ -50,18 +42,11 @@ export const protectAdmin = async (req, res, next) => {
                   });
             }
 
+            // DB lookup to confirm admin still exists and is active
             const found = await findAdminByAuthClaims(decoded);
             const department = resolveDepartmentForAdmin(found?.doc, decoded, req);
 
-            console.log('ADMIN_LOOKUP:', {
-                  found: found ? 'yes' : 'no',
-                  source: found?.source,
-                  doc: found?.doc ? { _id: found.doc._id, email: found.doc.email } : null,
-                  department: found?.doc?.department || found?.doc?.managedDepartment,
-            });
-
             if (!department) {
-                  console.warn('[protectAdmin] Department missing for admin:', decoded.email);
                   return res.status(403).json({
                         success: false,
                         message: 'Department missing. Log out and sign in again with your department.',
@@ -72,7 +57,6 @@ export const protectAdmin = async (req, res, next) => {
             req.admin = toReqAdmin(found?.doc, decoded, department);
 
             if (!req.admin.id) {
-                  console.error('[protectAdmin] Admin ID missing after toReqAdmin:', req.admin);
                   return res.status(401).json({
                         success: false,
                         message: 'Invalid admin session. Please log in again.',
@@ -82,25 +66,25 @@ export const protectAdmin = async (req, res, next) => {
 
             // Stale JWT id but valid email — use current DB id so MongoDB refs work
             if (found?.doc?._id && String(found.doc._id) !== String(decoded.id || '')) {
-                  console.log('[protectAdmin] Synced admin id from DB:', found.doc._id.toString());
                   req.admin.id = found.doc._id.toString();
                   req.admin._id = req.admin.id;
             }
 
-            console.log('[protectAdmin] Admin authenticated:', {
+            // Also set req.user for consistency with consolidated auth system
+            req.user = {
+                  _id: req.admin.id,
                   id: req.admin.id,
+                  name: req.admin.name,
                   email: req.admin.email,
+                  role: 'admin',
                   department: req.admin.department,
-                  source: found?.source || 'token',
-            });
+                  managedDepartment: req.admin.department,
+                  adminLevel: req.admin.adminLevel || 'department_admin',
+                  isActive: true,
+            };
 
             return next();
       } catch (error) {
-            console.error('[protectAdmin] JWT verification error:', {
-                  name: error.name,
-                  message: error.message,
-                  stack: error.stack,
-            });
             const msg = error.name === 'TokenExpiredError'
                   ? 'Session expired. Please log in again.'
                   : 'Invalid token. Please log in again.';

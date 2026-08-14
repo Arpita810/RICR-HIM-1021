@@ -4,11 +4,7 @@ import Admin from '../models/Admin.js';
 import Officer from '../models/Officer.js';
 import { resolveDepartmentSlug } from '../utils/departmentResolve.js';
 
-function attachReqUser(req, payload) {
-      req.user = payload;
-}
-
-// ── Protect: verify JWT (User, Admin, or Officer) ─────────────────────────────
+// ── Protect: verify JWT and attach req.user from DB (single source of truth) ──
 export const protect = async (req, res, next) => {
       let token;
 
@@ -19,12 +15,16 @@ export const protect = async (req, res, next) => {
       }
 
       if (!token) {
-            return res.status(401).json({ success: false, message: 'Not authorized. Please log in.' });
+            return res.status(401).json({
+                  success: false,
+                  message: 'Authentication required',
+            });
       }
 
       try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+            // ── Officer role ──────────────────────────────────────────────────
             if (decoded.role === 'officer') {
                   const officer = await Officer.findById(decoded.id).select('-password');
                   if (!officer) {
@@ -33,7 +33,7 @@ export const protect = async (req, res, next) => {
                   if (officer.banned) {
                         return res.status(403).json({ success: false, message: 'Account deactivated. Contact support.' });
                   }
-                  attachReqUser(req, {
+                  req.user = {
                         _id: officer._id,
                         id: officer._id,
                         name: officer.name,
@@ -44,15 +44,17 @@ export const protect = async (req, res, next) => {
                         department: officer.department,
                         employeeId: officer.employeeId,
                         isActive: true,
-                  });
+                  };
                   return next();
             }
 
+            // ── Admin role ────────────────────────────────────────────────────
             if (decoded.role === 'admin') {
+                  // Check Admin collection first
                   const admin = await Admin.findById(decoded.id).select('name email mobile department');
                   if (admin) {
                         const dept = resolveDepartmentSlug(admin.department) || admin.department;
-                        attachReqUser(req, {
+                        const adminUser = {
                               _id: admin._id,
                               id: admin._id,
                               name: admin.name,
@@ -64,24 +66,37 @@ export const protect = async (req, res, next) => {
                               managedDepartment: dept,
                               adminLevel: 'department_admin',
                               isActive: true,
-                        });
+                        };
+                        req.user = adminUser;
+                        // Backward compat: admin controllers use req.admin
+                        req.admin = adminUser;
                         return next();
                   }
 
+                  // Check User collection (legacy admin accounts)
                   const userAdmin = await User.findById(decoded.id).select('-password -aadhaarNumber -govtIdNumber');
                   if (userAdmin?.role === 'admin' && userAdmin.isActive !== false) {
+                        // Check token blacklist
+                        if (userAdmin.isTokenBlacklisted && userAdmin.isTokenBlacklisted(token)) {
+                              return res.status(401).json({ success: false, message: 'Token has been revoked. Please log in again.' });
+                        }
                         const dept = resolveDepartmentSlug(userAdmin.managedDepartment) || userAdmin.managedDepartment;
-                        attachReqUser(req, {
+                        const adminUser = {
                               ...userAdmin.toObject(),
                               id: userAdmin._id,
                               managedDepartment: dept || userAdmin.managedDepartment,
-                        });
+                              department: dept || userAdmin.department,
+                              role: 'admin',
+                        };
+                        req.user = adminUser;
+                        req.admin = adminUser;
                         return next();
                   }
 
                   return res.status(401).json({ success: false, message: 'Admin account no longer exists.' });
             }
 
+            // ── Citizen / default role ────────────────────────────────────────
             const user = await User.findById(decoded.id).select('-password -aadhaarNumber -govtIdNumber');
             if (!user) {
                   return res.status(401).json({ success: false, message: 'User account no longer exists.' });
@@ -90,7 +105,13 @@ export const protect = async (req, res, next) => {
                   return res.status(401).json({ success: false, message: 'Account deactivated. Contact support.' });
             }
 
-            attachReqUser(req, { ...user.toObject(), id: user._id });
+            // Check token blacklist
+            if (user.isTokenBlacklisted && user.isTokenBlacklisted(token)) {
+                  return res.status(401).json({ success: false, message: 'Token has been revoked. Please log in again.' });
+            }
+
+            // SECURITY: Always use the role from the DATABASE, never from the JWT
+            req.user = { ...user.toObject(), id: user._id, role: user.role };
             next();
       } catch (err) {
             return res.status(401).json({
@@ -104,14 +125,24 @@ export const protect = async (req, res, next) => {
 
 // ── Authorize: role-based access ──────────────────────────────────────────────
 export const authorize = (...roles) => (req, res, next) => {
-      if (!roles.includes(req.user?.role)) {
+      if (!req.user?.role) {
+            return res.status(401).json({
+                  success: false,
+                  message: 'Authentication required',
+            });
+      }
+      if (!roles.includes(req.user.role)) {
+            const roleList = roles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(' or ');
             return res.status(403).json({
                   success: false,
-                  message: `Access denied. This resource requires: ${roles.join(' or ')} role.`,
+                  message: `Access denied. ${roleList} role required.`,
             });
       }
       next();
 };
+
+// Named export alias for clarity — use either authorize or authorizeRole
+export const authorizeRole = authorize;
 
 // ── Optional auth: attach user if token present, don't fail if not ────────────
 export const optionalAuth = async (req, res, next) => {
