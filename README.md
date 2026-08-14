@@ -76,10 +76,9 @@ e-Samadhan AI/
 │   │   ├── common/                    # Navbar, Footer, Sidebar
 │   │   └── dashboard/                 # Shared dashboard components
 │   ├── pages/
-│   │   ├── auth/                      # Login, Register, ForgotPassword
-│   │   ├── dashboards/                # Citizen, Officer, Admin dashboards
-│   │   ├── complaints/                # File, view, track complaints
-│   │   └── landing/                   # Home page sections
+│   │   ├── auth/                      # Login, signup, forgot/reset password
+│   │   ├── dashboards/                # Citizen, officer, and admin dashboards
+│   │   └── complaints/                # Complaint views and management screens
 │   ├── i18n/                          # Internationalization (translations)
 │   ├── hooks/                         # Custom React hooks
 │   ├── services/                      # API service functions
