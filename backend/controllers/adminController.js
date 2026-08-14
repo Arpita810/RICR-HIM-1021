@@ -488,15 +488,68 @@ export const getAdminAnalytics = async (req, res) => {
     const pendingComplaints = await Complaint.countDocuments({ category: department, status: { $in: ['pending', 'assigned', 'in_progress'] } });
     const totalOfficers = await Officer.countDocuments({ department, banned: false });
 
+    // Aggregate complaints by status
+    const complaintsByStatus = await Complaint.aggregate([
+      { $match: { category: department } },
+      { $group: { _id: '$status', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    // Aggregate complaints by category (department)
+    const complaintsByCategory = await Complaint.aggregate([
+      { $match: { category: department } },
+      { $group: { _id: '$category', count: { $sum: 1 } } }
+    ]);
+
+    // Aggregate complaints by day for last 30 days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const complaintsByDay = await Complaint.aggregate([
+      { $match: { category: department, createdAt: { $gte: thirtyDaysAgo } } },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    // Calculate average resolution time in hours
+    const resolvedComplaintsList = await Complaint.find({
+      category: department,
+      status: 'resolved',
+      resolvedAt: { $exists: true }
+    });
+
+    let avgResolutionHours = 0;
+    if (resolvedComplaintsList.length > 0) {
+      const totalHours = resolvedComplaintsList.reduce((sum, complaint) => {
+        const createdTime = new Date(complaint.createdAt).getTime();
+        const resolvedTime = new Date(complaint.resolvedAt).getTime();
+        const hours = (resolvedTime - createdTime) / (1000 * 60 * 60);
+        return sum + hours;
+      }, 0);
+      avgResolutionHours = Math.round(totalHours / resolvedComplaintsList.length);
+    }
+
+    const analyticsData = {
+      totalComplaints,
+      resolvedComplaints,
+      pendingComplaints,
+      totalOfficers,
+      resolutionRate: totalComplaints > 0 ? Math.round((resolvedComplaints / totalComplaints) * 100) : 0,
+      avgResolutionHours,
+      complaintsByStatus,
+      complaintsByCategory,
+      complaintsByDay
+    };
+
     res.status(200).json({
       success: true,
-      data: {
-        totalComplaints,
-        resolvedComplaints,
-        pendingComplaints,
-        totalOfficers,
-        resolutionRate: totalComplaints > 0 ? Math.round((resolvedComplaints / totalComplaints) * 100) : 0,
-      },
+      data: analyticsData,
+      analytics: analyticsData
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
